@@ -1,4 +1,3 @@
-# DroneRanger
 # DroneRANGER
 
 ## Introduction
