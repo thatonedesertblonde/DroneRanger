@@ -9,6 +9,7 @@ from tkinter.filedialog import askopenfilename
 menu = tk.Tk()
 menu.title("Menu")
 
+# create frames for menu
 frame_classifiers = tk.Frame()
 frame_flight = tk.Frame()
 frame_settings = tk.Frame()
