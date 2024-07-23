@@ -14,7 +14,7 @@ frame_classifiers = tk.Frame()
 frame_flight = tk.Frame()
 frame_settings = tk.Frame()
 
-
+# create label classifier
 label_classifiers = tk.Button( master = frame_classifiers, text = "Object Detection")
 label_classifiers.pack()
 
