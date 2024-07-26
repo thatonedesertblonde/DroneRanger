@@ -3,6 +3,7 @@ from tkinter import ttk
 import time
 
 
+# callback function for passing class info to model
 def callback():
     print('Callback')
     peopleClass = people_sel.get()
@@ -25,15 +26,15 @@ def callback():
     return classList
 
 
-#Create an instance of Tkinter frame
+# create an instance of Tkinter frame
 win = tk.Tk()
-#Set the geometry of Tkinter Frame
+# set the geometry of Tkinter Frame
 win.geometry("750x250")
 
-#Initialize a Menu Bar
+# initialize a Menu Bar
 menubar = tk.Menu(win)
 
-#Setup variables for passing classes
+# setup variables for passing classes
 people_sel = tk.IntVar()
 cars_sel = tk.IntVar()
 trucks_sel = tk.IntVar()
@@ -49,7 +50,7 @@ airplanes_sel.set(1)
 bus_sel.set(1)
 boats_sel.set(1)
 
-#Add Menu Items in the MenuBar
+# add Menu Items in the MenuBar
 menu_items = tk.Menu(menubar)
 menu_items.add_checkbutton(label="People", onvalue=1, offvalue=0, 
                            variable=people_sel, command=lambda: callback())
@@ -65,8 +66,9 @@ menu_items.add_checkbutton(label="Boats", onvalue=1, offvalue=0,
                            variable=boats_sel, command=lambda: callback())
 
 
-# Add the Viwable Menu to the MenuBar
+# add the Viewable Menu to the MenuBar
 menubar.add_cascade(label='Classes', menu=menu_items)
 win.config(menu=menubar)
 
+# mainloop
 win.mainloop()
