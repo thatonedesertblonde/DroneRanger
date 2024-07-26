@@ -21,7 +21,7 @@ def callback():
     print("")
     classList = [peopleClass, carsClass, trucksClass, 
                  airplaneClass, busClass, boatsClass]
-    
+    print(classList)
     return classList
 
 
