@@ -3,33 +3,10 @@ from tkinter import ttk
 import time
 
 
-def new_file_clicked(event=None):
-    print("The New File menu was clicked!")
-
-def run_at_startup_clicked():
-    if run_at_startup.get():
-        print("Menu checked (run at stratup.)")
-    else:
-        print("Menu unchecked (do not run at startup.)")
-
-def theme_changed():
-    theme_value = theme.get()
-    if theme_value == 1:
-        print("Light theme selected.")
-    elif theme_value == 2:
-        print("Dark theme selected.")
-
-
 def callback():
     print('Callback')
     peopleClass = people_sel.get()
     print(peopleClass)
-
-#    if chkClass == 0:
-#        print('Off')
-#    else:
-#        print('On')
-    
 
 
 #Create an instance of Tkinter frame
