@@ -6,7 +6,23 @@ import time
 def callback():
     print('Callback')
     peopleClass = people_sel.get()
-    print(peopleClass)
+    carsClass = cars_sel.get()
+    trucksClass = trucks_sel.get()
+    airplaneClass = airplanes_sel.get()
+    busClass = bus_sel.get()
+    boatsClass = boats_sel.get()
+    
+    print('People: ', peopleClass)
+    print('Cars: ', carsClass)
+    print('Trucks: ', trucksClass)
+    print('Airplane: ', airplaneClass)
+    print('Bus: ', busClass)
+    print('Boats: ', boatsClass)
+    print("")
+    classList = [peopleClass, carsClass, trucksClass, 
+                 airplaneClass, busClass, boatsClass]
+    
+    return classList
 
 
 #Create an instance of Tkinter frame
