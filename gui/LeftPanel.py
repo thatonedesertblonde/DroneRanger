@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import *
 import time
 from tkinter.filedialog import askopenfilename
 
@@ -28,21 +27,25 @@ frame_flight.pack()
 frame_settings.pack()
 
 #class checkboxes --- window
-class_frame = Tk()
+class_frame = tk.Tk()
 class_frame.title("Classifications")
 
 
 class_label = tk.Label(master = class_frame, text = "Classifiers: ")
 #class_label.pack()
 
-people = IntVar()
-Checkbutton(class_frame, text='people', variable = people).grid(row = 0, sticky=W)
-cars = IntVar()
-Checkbutton(class_frame, text='cars', variable = cars).grid(row = 1, sticky=W)
-trucks = IntVar()
-Checkbutton(class_frame, text='trucks', variable = trucks).grid(row = 2, sticky=W)
-planes = IntVar()
-Checkbutton(class_frame, text='planes', variable = planes).grid(row = 3, sticky=W)
+people = tk.IntVar()
+tk.Checkbutton(class_frame, text='people', 
+               variable = people).grid(row = 0, sticky='W')
+cars = tk.IntVar()
+tk.Checkbutton(class_frame, text='cars', 
+               variable = cars).grid(row = 1, sticky='W')
+trucks = tk.IntVar()
+tk.Checkbutton(class_frame, text='trucks', 
+               variable = trucks).grid(row = 2, sticky='W')
+planes = tk.IntVar()
+tk.Checkbutton(class_frame, text='planes', 
+               variable = planes).grid(row = 3, sticky='W')
 
 #on/off option --- window
 def on_select(event):
@@ -61,11 +64,11 @@ combo_box.set("ON")
 combo_box.bind("<<ComboboxSelected>>", on_select)
 
 #threat entry --- window
-master = Tk()
+master = tk.Tk()
 master.title("Threat Count")
 
-Label(master, text='Threat Count: ').grid(row=0)
-entry = Entry(master)
+tk.Label(master, text='Threat Count: ').grid(row=0)
+entry = tk.Entry(master)
 entry.grid(row=0, column=1)
 
 #specialty --- window
@@ -105,9 +108,6 @@ progress.pack(pady=20)
 
 start_button = tk.Button(facial_window, text="Start Progress", command=start_progress)
 start_button.pack(pady=10)
-
-
-
 
 
 root.mainloop()

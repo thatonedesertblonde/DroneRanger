@@ -7,6 +7,7 @@ import os
 
 class DroneApp:
     def __init__(self, buttonWindow, videoWindow):
+        
         self.buttonWindow = buttonWindow
         self.videoWindow = videoWindow
         self.video_capture = cv2.VideoCapture("/app/droneranger/videos/cafe.mp4")
@@ -14,15 +15,38 @@ class DroneApp:
         self.canvas = tk.Canvas(videoWindow, width=1820, height=1080)
         self.canvas.grid(column=1, row=0)
         self.update_webcam()
-        self.download_button = tk.Button(buttonWindow, text="Capture", 
-                                        command=self.download_image)
-        self.download_button.grid(column=0, row=5)
-        
+        self.menu_button = tk.Button(buttonWindow, text="Menu", 
+                                        command=self.menuButton)
+        self.menu_button.grid(column=0, row=5)
+    
+    def menuButton(self):
+        menu = tk.Toplevel()
+        menu.grab_set()
+        menu.title("Menu")
+        frame_classifiers = tk.Frame()
+        frame_flight = tk.Frame()
+        frame_settings = tk.Frame()
+        label_classifiers = tk.Button(frame_classifiers, 
+                                      text = "Object Detection")
+        label_classifiers.pack()
+        label_flight = tk.Button(frame_flight, 
+                                 text = "Mission Profile")
+        label_flight.pack()
+        label_settings = tk.Button(frame_settings, 
+                                   text = "Pilot's Lounge")    
+        label_settings.pack()
+
+        frame_classifiers.pack()
+        frame_flight.pack() 
+        frame_settings.pack()
+
+
     def update_webcam(self):
         ret, frame = self.video_capture.read()
         frame = cv2.resize(frame, (1820, 1080)) 
         if ret:
-            self.current_image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+            self.current_image = Image.fromarray(cv2.cvtColor(frame, 
+                                                              cv2.COLOR_BGR2RGB))
             self.photo = ImageTk.PhotoImage(image=self.current_image)
             self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
             self.videoWindow.after(5, self.update_webcam)
@@ -36,8 +60,12 @@ class DroneApp:
             self.current_image.save(file_path)
             #self.current_image.save('/app/droneranger/captures/capture.jpg')
         else:
-            print('image is none')    
+            print('image is none') 
+
+
 root = tk.Tk()
+root.title("DroneRANGER")
+
 # Create an "inner window" frame
 #panedwindow = ttk.Panedwindow(root, orient = 'horizontal', alpha=0.3)
 panedwindow = ttk.Panedwindow(root, orient = 'horizontal')
@@ -51,60 +79,9 @@ panedwindow.add(video_frame, weight = 4)
 
 root.attributes('-alpha', 0.3)
 
-class_title = tk.StringVar()  
-classes_lb = tk.Label(left_button_frame, textvariable=class_title, bg='#fff', fg='#000', font='Helvetica 12 bold', relief='raised')
-class_title.set("Dectected Classes")
-
-CheckPeople = tk.IntVar() 
-CheckVehicles = tk.IntVar() 
-CheckBoats = tk.IntVar() 
-CheckAirplanes = tk.IntVar()
-
-
-Button1 = tk.Checkbutton(left_button_frame, 
-                    text = "People", 
-                    variable = CheckPeople, 
-                    onvalue = 1, 
-                    offvalue = 0, 
-                    height = 2, 
-                    width = 10) 
-
-Button2 = tk.Checkbutton(left_button_frame, 
-                    text = "Vehicles", 
-                    variable = CheckVehicles, 
-                    onvalue = 1, 
-                    offvalue = 0, 
-                    height = 2, 
-                    width = 10) 
-
-Button3 = tk.Checkbutton(left_button_frame, 
-                    text = "Boats", 
-                    variable = CheckBoats, 
-                    onvalue = 1, 
-                    offvalue = 0, 
-                    height = 2, 
-                    width = 10) 
-   
-Button4 = tk.Checkbutton(left_button_frame, 
-                    text = "Airplanes", 
-                    variable = CheckAirplanes, 
-                    onvalue = 1, 
-                    offvalue = 0, 
-                    height = 2, 
-                    width = 10) 
-
-classes_lb.grid()    
-Button1.grid() 
-Button2.grid() 
-Button3.grid() 
-Button4.grid() 
-#video_window = ttk.Frame(root, relief="sunken")
-#video_window.grid() #pack(pady=10, padx=10)
-#root.attributes('-zoomed', True)
 app = DroneApp(left_button_frame, video_frame)
 
 #specialty
-
 specialty_title = tk.StringVar()  
 specialty_lb = tk.Label(left_button_frame, textvariable=specialty_title, bg='#fff', fg='#000', font='Helvetica 12 bold', relief='raised')
 specialty_title.set("Facial Recognition")
