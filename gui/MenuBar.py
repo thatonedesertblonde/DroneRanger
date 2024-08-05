@@ -100,6 +100,8 @@ def mode():
     combo_box.set("MANUAL")
     combo_box.bind("<<ComboboxSelected>>", mode)
 
+def setways():
+    
 #---MODE   
 m = tk.Menu(mp_tab, tearoff = False)
 mp_tab.add_command(label = "Mode",
@@ -107,9 +109,10 @@ mp_tab.add_command(label = "Mode",
                    command = mode)
 
 #---SET WAY POINTS
-#wp = tk.Menu(mp_tab,tearoff = False)
-#mp_tab.add_command(label = 'Set Way Points',
-                   #accelerator = 'crtl+W',
+mp_tab.add_separator()
+wp = tk.Menu(mp_tab,tearoff = False)
+mp_tab.add_command(label = 'Set Way Points',
+                   accelerator = 'crtl+W')
                    #command = setways)
 #pilots lounge
 pl_tab = tk.Menu(menubar, tearoff = False)
