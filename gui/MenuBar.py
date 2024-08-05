@@ -100,8 +100,8 @@ def mode():
     combo_box.set("MANUAL")
     combo_box.bind("<<ComboboxSelected>>", mode)
 
-def setways():
-    
+#def setways():
+
 #---MODE   
 m = tk.Menu(mp_tab, tearoff = False)
 mp_tab.add_command(label = "Mode",
