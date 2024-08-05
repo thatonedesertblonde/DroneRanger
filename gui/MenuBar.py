@@ -7,7 +7,7 @@ root.geometry('400x300')
 
 def od():
     #OD window
-    class_frame = tk.Tk()
+    class_frame = tk.Tk() #.grid(anchor = 'w')
     class_frame.title("Required Object Detections:")
     class_frame.geometry('600x300')
     od_window = tk.Label(master = class_frame, text = "Required Object Detections: ")
