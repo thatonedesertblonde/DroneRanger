@@ -8,7 +8,7 @@ model = YOLO('/app/dnn_model/yolov8x.pt')
 
 
 # load video
-cap = cv2.VideoCapture('/app/videos/Cafe.mp4')
+cap = cv2.VideoCapture('videos/Cafe.mp4')
 
 frame_width = int(cap.get(3))
 frame_height = int(cap.get(4))

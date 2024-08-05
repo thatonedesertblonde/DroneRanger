@@ -6,9 +6,9 @@ import cv2
 
 def tracker_init():
     # load yolov8m model
-    model = YOLO('/app/dnn_model/yolov8x.pt')
+    model = YOLO('/app/OD/dnn_model/yolov8x.pt')
     # load video
-    cap = cv2.VideoCapture('/app/videos/Cafe.mp4')
+    cap = cv2.VideoCapture('/app/OD/videos/Cafe.mp4')
     # get incoming frame width
     frame_width = int(cap.get(3))
     frame_height = int(cap.get(4))
@@ -30,7 +30,6 @@ def track_objects(model, cap, size, result):
     track_id = 0
 
 
-
     while True:
         ret, frame = cap.read()
         count += 1
@@ -48,16 +47,17 @@ def track_objects(model, cap, size, result):
             confidence = data[4] 
             class_ids = data[5]
         
-            # calculate the center points off the corners
-            cx = int((xmin + xmax) / 2)
-            cy = int((ymin + ymax) / 2)
-            center_points_curr_frame.append([cx, cy]) # append center points of each box
+            if class_ids == 0.0 or class_ids == 2.0 or class_ids == 4.0 or class_ids == 5.0 or class_ids == 7.0 or class_ids == 8.0:
+                # calculate the center points off the corners
+                cx = int((xmin + xmax) / 2)
+                cy = int((ymin + ymax) / 2)
+                center_points_curr_frame.append([cx, cy]) # append center points of each box
 
-            # draw boxes
-            cv2.rectangle(frame, (int(xmin), int(ymin)), (int(xmax), int(ymax)), (0, 255, 0), 2)
-            class_info = model.names[class_ids]
-            cv2.putText(frame, f"{class_info}: {confidence:.2f}", (int(xmin), int(ymin)),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.95, (250, 250, 0), 2) # draws the name of the object and the confidence level next it
+                # draw boxes
+                cv2.rectangle(frame, (int(xmin), int(ymin)), (int(xmax), int(ymax)), (0, 255, 0), 2)
+                class_info = model.names[class_ids]
+                cv2.putText(frame, f"{class_info}: {confidence:.2f}", (int(xmin), int(ymin)),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.95, (250, 250, 0), 2) # draws the name of the object and the confidence level next it
     
         # first two frames
         if count <= 2:
@@ -103,6 +103,7 @@ def track_objects(model, cap, size, result):
 
         # show frame
         result.write(frame)
+        frame = cv2.resize(frame, (1820, 1080))
         cv2.imshow("Frame", frame)
 
 
