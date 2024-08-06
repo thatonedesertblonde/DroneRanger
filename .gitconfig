@@ -1,0 +1,5 @@
+[credential]
+	helper = "!f() { /root/.vscode-server/bin/b1c0a14de1414fcdaa400695b4db1c0799bc3124/node /tmp/vscode-remote-containers-645eb5a4-1e9d-449d-bf4a-c01709686ce7.js git-credential-helper $*; }; f"
+[user]
+	name = thatonedesertblonde
+	email = thatonedesertblonde@protonmail.com

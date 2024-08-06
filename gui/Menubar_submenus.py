@@ -81,7 +81,7 @@ class DroneApp:
         self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
         #self.classPerson = person
         self.videoWindow.after(1, self.update_frame)
-            
+    # download        
     def download_image(self):
         if self.current_image is not None:
             print("button pressed")
