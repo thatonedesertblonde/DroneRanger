@@ -8,7 +8,7 @@ def tracker_init():
     # load yolov8m model
     model = YOLO('/app/OD/dnn_model/yolov8x.pt')
     # load video
-    cap = cv2.VideoCapture('/app/OD/videos/trucks.mp4')
+    cap = cv2.VideoCapture('/app/droneranger/videos/Cafe.mp4')
     # get incoming frame width
     frame_width = int(cap.get(3))
     frame_height = int(cap.get(4))
@@ -108,7 +108,7 @@ def track_objects(model, cap, size, result, classPerson=0):
         cv2.putText(frame, str(object_id), (pt[0], pt[1] - 7), 0, 1, (0, 0, 255), 2) # draw a circle in center, place frame #
 
     # show frame
-    result.write(frame)
+    #result.write(frame)
     frame = cv2.resize(frame, (1820, 1080))
     cv2.imshow("Frame", frame)
 

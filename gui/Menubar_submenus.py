@@ -60,13 +60,13 @@ def tc():
     tk.Label(tc_frame, text='Threat Count: ').grid(row=0, column = 1)
 
 class DroneApp:
-    def __init__(self, videoWindow):
+    def __init__(self, videoWindow, person):
         self.videoWindow = videoWindow
         #self.video_capture = cv2.VideoCapture("/app/droneranger/videos/cafe.mp4")
         #self.video_capture = tr.tracker_init()
         self.model, self.cap, self.size = tr.tracker_init()
         self.result = tr.tracker_save(self.size)
-        self.classPerson = 1
+        self.classPerson = person
         self.current_image = None
         self.canvas = tk.Canvas(videoWindow, width=1820, height=1080)
         self.canvas.grid(column=1, row=0)
@@ -79,7 +79,8 @@ class DroneApp:
                                                           cv2.COLOR_BGR2RGB))
         self.photo = ImageTk.PhotoImage(image=self.current_image)
         self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
-        self.videoWindow.after(10, self.update_frame)
+        #self.classPerson = person
+        self.videoWindow.after(1, self.update_frame)
             
     def download_image(self):
         if self.current_image is not None:
@@ -92,7 +93,11 @@ class DroneApp:
         else:
             print('image is none') 
 
-
+def var(var):
+    person = var.get()
+    print(person)
+    return person
+    
 root = tk.Tk()
 root.title('DroneRanger')
 root.geometry('1820x1080')
@@ -104,8 +109,10 @@ root.config(menu=menubar)
 #---OBJECTS
 od_tab = tk.Menu(menubar, tearoff=0) #button
 od_menubar = tk.Menu(od_tab)
-
-od_menubar.add_checkbutton(label="People", onvalue=1, offvalue=0)
+people = tk.IntVar()
+od_menubar.add_checkbutton(label="People", variable = people, 
+                           onvalue=1, offvalue=0,
+                           command=lambda: var(people))
 od_menubar.add_checkbutton(label="Cars", onvalue=1, offvalue=0)
 od_menubar.add_checkbutton(label="Trucks", onvalue=1, offvalue=0)
 od_menubar.add_checkbutton(label="Planes", onvalue=1, offvalue=0)
@@ -117,9 +124,6 @@ od_tab.add_cascade(menu=od_menubar, label="Objects", underline=0)
 #                   accelerator = 'crtl+O')
 
 menubar.add_cascade(label="ObjDetect", underline=0, menu=od_tab)
-
-
-
 
 #---THREAT ON/OFF
 od_tab.add_separator() # next line down
@@ -177,5 +181,6 @@ panedwindow = ttk.Panedwindow(root, orient = 'horizontal')
 panedwindow.pack(fill = 'both', expand = True)
 video_frame = ttk.Frame(root, width = 1720, height = 1000, relief = 'sunken')
 panedwindow.add(video_frame)
-app = DroneApp(video_frame)
+person = 1
+app = DroneApp(video_frame, person)
 root.mainloop()
