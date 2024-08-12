@@ -5,14 +5,12 @@ from PIL import Image, ImageTk
 import os
 import obj_detection.tracker as tr
 
-# Test
+
 def od():
     #OD window
-    class_frame = tk.Tk()
-    #class_frame = tk.Frame(root, width=180, height=180)
-    class_frame.title("Classes:")
-    class_frame.geometry('180x160')
-    #class_frame.grid(row=1, col=1)
+    class_frame = tk.Tk() #.grid(anchor = 'w')
+    class_frame.title("Required Object Detections:")
+    class_frame.geometry('600x300')
     od_window = tk.Label(master = class_frame, text = "Required Object Detections: ")
     
     #classes
@@ -37,27 +35,27 @@ def od():
                    
 def onOff():
     #threat window
-    threat_frame = tk.Tk()
-    threat_frame.title("Threat ON/OFF:")
-    threat_frame.geometry('300x300')
-    #dropbox
-    combo_box = ttk.Combobox(threat_frame, values=["ON", "OFF"])
-    combo_box.pack(pady=5)
-    combo_box.set("ON")
-    combo_box.bind("<<ComboboxSelected>>", onOff)
-
-    threat_window = tk.Label(master = threat_frame, text = "Threat ON/OFF: ")
+    threat_window = tk.Tk()
+    threat_window.title("Threat Attributes:")
+    threat_window.geometry('600x300')
     
-    print("Threat menu needs to pop up")
-   
-def tc():
-    tc_frame= tk.Tk()
-    tc_frame.title("Threat Count")
-    tc_frame.geometry('300x300')
+    
+    #dropbox
+    threat_label = tk.Label(text = "Threat ON/OFF: ")
+    combo_box = ttk.Combobox(threat_window, values=["ON", "OFF"])
+    combo_box.set("ON")
+    combo_box.pack(padx=10, pady=10)
+    combo_box.bind(threat_label, "<<ComboboxSelected>>", onOff)
+    threat_label.place(sticky = combo_box)
+    
 
-    entry = tk.Entry(tc_frame)
+    #threat count--VALID
+    '''entry = tk.Entry(threat_window)
     entry.grid(row = 0, column = 2, sticky = 'W')
-    tk.Label(tc_frame, text='Threat Count: ').grid(row=0, column = 1)
+    tk.Label(threat_window, text='Threat Count: ').grid(row=0, column = 1)'''
+
+   
+    print("Threat menu needs to pop up")
 
 class DroneApp:
     def __init__(self, videoWindow, person):
@@ -71,6 +69,12 @@ class DroneApp:
         self.canvas = tk.Canvas(videoWindow, width=1820, height=1080)
         self.canvas.grid(column=1, row=0)
         self.update_frame()
+
+        '''
+        ---creates columns to sticky exactly where you want placements
+        videoWindow.columconfigure((0, 1, 2), weight = 1)
+        videoWindow.rowconfigure((0, 1, 2, 3, 4), weight = 1)
+        ''' 
         
     def update_frame(self):
         frame = tr.track_objects(self.model, self.cap, self.size, 
@@ -107,37 +111,20 @@ menubar = tk.Menu(root)
 root.config(menu=menubar)
 
 #---OBJECTS
-od_tab = tk.Menu(menubar, tearoff=0) #button
-od_menubar = tk.Menu(od_tab)
-people = tk.IntVar()
-od_menubar.add_checkbutton(label="People", variable = people, 
-                           onvalue=1, offvalue=0,
-                           command=lambda: var(people))
-od_menubar.add_checkbutton(label="Cars", onvalue=1, offvalue=0)
-od_menubar.add_checkbutton(label="Trucks", onvalue=1, offvalue=0)
-od_menubar.add_checkbutton(label="Planes", onvalue=1, offvalue=0)
-od_menubar.add_checkbutton(label="Boats", onvalue=1, offvalue=0)
+od_tab = tk.Menu(menubar, tearoff = False) #button
+menubar.add_cascade(menu = od_tab, label = "Object Detection")
 
-od_tab.add_cascade(menu=od_menubar, label="Objects", underline=0)
+od_tab.add_command(label = "Objects",
+                   accelerator = 'crtl+O',
+                   command = od)
 
-#od_tab.add_command(label = "Objects",
-#                   accelerator = 'crtl+O')
-
-menubar.add_cascade(label="ObjDetect", underline=0, menu=od_tab)
-
-#---THREAT ON/OFF
+#---THREAT 
 od_tab.add_separator() # next line down
 threat_tab = tk.Menu(od_tab, tearoff = False) #tab
 od_tab.add_command(label = 'Threat',
                        accelerator = 'ctrl+T',
                        command = onOff)
 
-#---THREAT COUNT
-od_tab.add_separator()
-threat_count = tk.Menu(od_tab, tearoff = False)
-od_tab.add_command(label = 'Threat Count',
-                   accelerator = 'crtl+C',
-                   command = tc)
 
 
 # mission profile
