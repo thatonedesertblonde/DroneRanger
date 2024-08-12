@@ -44,13 +44,13 @@ def onOff():
     threat_label = tk.Label(text = "Threat ON/OFF: ")
     combo_box = ttk.Combobox(threat_window, values=["ON", "OFF"])
     combo_box.set("ON")
-    combo_box.pack(padx=10, pady=10)
+    combo_box.grid(row=0, column=3)
     combo_box.bind(threat_label, "<<ComboboxSelected>>", onOff)
-    threat_label.place(sticky = combo_box)
+    
     
 
-    #threat count--VALID
-    '''entry = tk.Entry(threat_window)
+    '''#threat count--VALID
+    entry = tk.Entry(threat_window)
     entry.grid(row = 0, column = 2, sticky = 'W')
     tk.Label(threat_window, text='Threat Count: ').grid(row=0, column = 1)'''
 
