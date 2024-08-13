@@ -11,27 +11,77 @@ def od():
     #OD window
     class_frame = tk.Tk() #.grid(anchor = 'w')
     class_frame.title("Required Object Detections:")
-    class_frame.geometry('600x300')
-    od_window = tk.Label(master = class_frame, text = "Required Object Detections: ")
+    class_frame.geometry('550x220')
+    #od_window = tk.Label(master = class_frame, text = "Required Object Detections: ")
     
     #classes
     people = tk.IntVar()
-    tk.Checkbutton(class_frame, text='people', 
-               variable = people).grid(row = 1, sticky='W')
+    threat_people = tk.IntVar()
+    count_people = tk.StringVar()
+    tk.Checkbutton(class_frame, text='People', 
+               variable = people).grid(row = 1, column=0, padx=10, 
+                                       pady=10, sticky='W')
+    tk.Checkbutton(class_frame, text='People Threat On/Off',
+                   variable=threat_people).grid(row=1, column=1, 
+                                                pady=10, sticky='W')
+    tk.Label(class_frame, text='People Count: ').grid(row=1, column = 2, 
+                                                      padx=10, pady=10)
+    tk.Entry(class_frame, textvariable=count_people).grid(row=1, column=3, 
+                                                          pady=10, sticky='W')
+ 
     cars = tk.IntVar()
-    tk.Checkbutton(class_frame, text='cars', 
-               variable = cars).grid(row = 2, sticky='W')
+    threat_car = tk.IntVar()
+    count_cars = tk.StringVar()
+    tk.Checkbutton(class_frame, text='Cars', 
+               variable = cars).grid(row = 2, column=0, padx=10, 
+                                     pady=10, sticky='W')
+    tk.Checkbutton(class_frame, text='Car Threat On/Off',
+                   variable=threat_car).grid(row=2, column=1, 
+                                             pady=10, sticky='W')
+    tk.Label(class_frame, text='Car Count: ').grid(row=2, column = 2, 
+                                                      padx=10, pady=10)
+    tk.Entry(class_frame, textvariable=count_cars).grid(row=2, column=3, 
+                                                          pady=10, sticky='W') 
+    
     trucks = tk.IntVar()
-    tk.Checkbutton(class_frame, text='trucks', 
-               variable = trucks).grid(row = 3, sticky='W')
+    threat_trucks = tk.IntVar()
+    count_trucks = tk.StringVar()
+    tk.Checkbutton(class_frame, text='Trucks', 
+               variable = trucks).grid(row = 3, column=0, padx=10, 
+                                       pady=10, sticky='W')
+    tk.Checkbutton(class_frame, text='Trucks Threat On/Off',
+                   variable=threat_trucks).grid(row=3, column=1, 
+                                                pady=10, sticky='W')
+    tk.Label(class_frame, text='Truck Count: ').grid(row=3, column=2, 
+                                                      padx=10, pady=10)
+    tk.Entry(class_frame, textvariable=count_trucks).grid(row=3, column=3, 
+                                                          pady=10, sticky='W')    
+    
     planes = tk.IntVar()
-    tk.Checkbutton(class_frame, text='planes', 
-               variable = planes).grid(row = 4, sticky='W')
+    threat_plane = tk.IntVar()
+    count_plane = tk.StringVar()
+    tk.Checkbutton(class_frame, text='Planes', 
+               variable = planes).grid(row = 4, column=0, padx=10, 
+                                       pady=10, sticky='W')
+    tk.Checkbutton(class_frame, text='Plane Threat On/Off',
+                   variable=threat_plane).grid(row=4, column=1, 
+                                               pady=10, sticky='W')
+    tk.Label(class_frame, text='Plane Count: ').grid(row=4, column=2, 
+                                                      padx=10, pady=10)
+    tk.Entry(class_frame, textvariable=count_plane).grid(row=4, column=3, 
+                                                         pady=10, sticky='W')
+    
     boats = tk.IntVar()
-    tk.Checkbutton(class_frame, text='boats', 
-               variable = boats).grid(row = 5, sticky='W')
-
-    print("Object detection menu needs to pop up")
+    threat_boats = tk.IntVar()
+    count_boats = tk.StringVar()
+    tk.Checkbutton(class_frame, text='Boats', 
+               variable = boats).grid(row = 5, column=0, padx=10, sticky='W')
+    tk.Checkbutton(class_frame, text='Boat Threat On/Off',
+                   variable=threat_boats).grid(row=5, column=1, sticky='W')
+    tk.Label(class_frame, text='Boat Count: ').grid(row=5, column=2, 
+                                                      padx=10, pady=10)
+    tk.Entry(class_frame, textvariable=count_boats).grid(row=5, column=3, 
+                                                         pady=10, sticky='W')
 
                    
 def onOff():
