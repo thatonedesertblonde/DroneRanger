@@ -6,6 +6,7 @@ import os
 import obj_detection.tracker as tr
 
 
+
 def od():
     #OD window
     class_frame = tk.Tk() #.grid(anchor = 'w')
@@ -36,23 +37,30 @@ def od():
 def onOff():
     #threat window
     threat_window = tk.Tk()
-    threat_window.title("Threat Attributes:")
+    threat_window.title("Objects Detection Threat Analysis:")
     threat_window.geometry('600x300')
     
-    
-    #dropbox
-    threat_label = tk.Label(text = "Threat ON/OFF: ")
-    combo_box = ttk.Combobox(threat_window, values=["ON", "OFF"])
+    def apply_threat():
+        threat_label.config(text = combo_box.get())
+
+    #combobox
+    combo_box = ttk.Combobox(threat_window, values=["ON", "OFF"], state = 'readonly')
+    combo_box.pack(pady=5)
     combo_box.set("ON")
-    combo_box.grid(row=0, column=3)
-    combo_box.bind(threat_label, "<<ComboboxSelected>>", onOff)
+    #label
+    threat_label = tk.Label(master = threat_window, text = "Threat ON/OFF: ")
+    threat_label.place(x=0, y= 0)
+    #submit button
+    submit_button = tk.Button(threat_window, text = 'Apply', command = apply_threat)
+    submit_button.pack(pady = 20)
+
     
     
 
-    '''#threat count--VALID
+    #threat count--VALID
     entry = tk.Entry(threat_window)
     entry.grid(row = 0, column = 2, sticky = 'W')
-    tk.Label(threat_window, text='Threat Count: ').grid(row=0, column = 1)'''
+    tk.Label(threat_window, text='Threat Count: ').grid(row=0, column = 1)
 
    
     print("Threat menu needs to pop up")
