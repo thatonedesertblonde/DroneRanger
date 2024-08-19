@@ -5,11 +5,20 @@ import cv2
 
 
 class tracker:
-    def __init__(self, person, car, truck, plane, boat):
+    red = (0, 0, 255)
+    green = (25, 255, 25)
+    cnt_person = 0
+    cnt_car = 0
+    cnt_truck = 0
+    cnt_plane = 0 
+    cnt_boat = 0 
+    def __init__(self, person, car, truck, plane, boat,
+                 th_person, th_car, th_truck, th_plane, th_boat):
+
         # load yolov8m model
         self.model = YOLO('/app/OD/dnn_model/yolov8x.pt')
         # load video
-        self.cap = cv2.VideoCapture('/app/droneranger/videos/Cafe.mp4')
+        self.cap = cv2.VideoCapture('/app/droneranger/videos/AirPortVideo1.mp4') #Cafe.mp4
         # get incoming frame width
         frame_width = int(self.cap.get(3))
         frame_height = int(self.cap.get(4))
@@ -20,18 +29,23 @@ class tracker:
         self.truck = truck
         self.plane = plane
         self.boat = boat
+        self.th_person = th_person
+        self.th_car = th_car
+        self.th_truck = th_truck
+        self.th_plane = th_plane
+        self.th_boat = th_boat
         self.count = 0
         self.center_points_prev_frame = []
         self.tracking_objects = {} 
         self.track_id = 0
-
     def tracker_save(self):
         # create video writer
         self.result = cv2.VideoWriter('track.mp4', 
                                       cv2.VideoWriter_fourcc(*'mp4v'), 
                                       10, self.size)
     
-    def track_objects(self, person, car, truck, plane, boat):
+    def track_objects(self, person, car, truck, plane, boat,
+                      th_person, th_car, th_truck, th_plane, th_boat):
         model = self.model
         ret, frame = self.cap.read()
         self.count += 1
@@ -54,20 +68,36 @@ class tracker:
             if (person == 1 and class_ids == 0.0) \
                 or (car == 1 and class_ids == 2.0) \
                 or (plane == 1 and class_ids == 4.0) \
-                or (person == 1 and class_ids == 5.0) \
                 or (truck  == 1 and class_ids == 7.0) \
                 or (boat == 1 and class_ids == 8.0):
+                
+                print(th_person)
+                
+                # set color to green if threat is off.  Red for on.
+                color = self.green
+                if th_person == 1 and class_ids == 0.0:
+                    color = self.red
+                elif th_car == 1 and class_ids == 2.0:
+                    color = self.red
+                elif th_plane == 1 and class_ids == 4.0:
+                    color = self.red
+                elif th_truck == 1 and class_ids == 7.0:
+                    color = self.red
+                elif th_boat == 1 and class_ids == 8.0:
+                    color = self.red
                 
                 # calculate the center points off the corners
                 cx = int((xmin + xmax) / 2)
                 cy = int((ymin + ymax) / 2)
-                center_points_curr_frame.append([cx, cy]) # append center points of each box
+                # append center points of each box
+                center_points_curr_frame.append([cx, cy]) 
 
                 # draw boxes
-                cv2.rectangle(frame, (int(xmin), int(ymin)), (int(xmax), int(ymax)), (0, 255, 0), 2)
+                cv2.rectangle(frame, (int(xmin), int(ymin)), (int(xmax), int(ymax)), color, 2)
                 class_info = self.model.names[class_ids]
+                # draws the name of the object and the confidence level next it
                 cv2.putText(frame, f"{class_info}: {confidence:.2f}", (int(xmin), int(ymin)),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.95, (250, 250, 0), 2) # draws the name of the object and the confidence level next it
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.95, (250, 250, 0), 2) 
 
         # first two frames
         if self.count <= 2:
@@ -109,7 +139,8 @@ class tracker:
         # label boxes with ids
         for object_id, pt in self.tracking_objects.items():
             cv2.circle(frame, pt, 5, (0, 0, 5),  -1)
-            cv2.putText(frame, str(object_id), (pt[0], pt[1] - 7), 0, 1, (0, 0, 255), 2) # draw a circle in center, place frame #
+            # draw a circle in center, place frame #
+            cv2.putText(frame, str(object_id), (pt[0], pt[1] - 7), 0, 1, (0, 0, 255), 2) 
 
         # resize frame
         frame = cv2.resize(frame, (1920, 1080))
