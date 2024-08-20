@@ -40,24 +40,24 @@ def boatChange(obj):
     print('boat button click ************************: ', DroneApp.boat_sel)
 
 def people_threat(obj):
-    DroneApp.people_threat = obj.get()
-    print('people threat click ************************: ', DroneApp.people_threat)
+    DroneApp.person_th = obj.get()
+    print('people threat click ************************: ', DroneApp.person_th)
     
 def car_threat(obj):
-    DroneApp.car_threat = obj.get()
-    print('car threat click ************************: ', DroneApp.car_threat)
+    DroneApp.car_th = obj.get()
+    print('car threat click ************************: ', DroneApp.car_th)
 
 def truck_threat(obj):
-    DroneApp.truck_threat = obj.get()
-    print('truck threat click ************************: ', DroneApp.truck_threat)
+    DroneApp.truck_th = obj.get()
+    print('truck threat click ************************: ', DroneApp.truck_th)
 
 def plane_threat(obj):
-    DroneApp.plane_threat = obj.get()
-    print('plane threat click ************************: ', DroneApp.plane_threat)
+    DroneApp.plane_th = obj.get()
+    print('plane threat click ************************: ', DroneApp.plane_th)
 
 def boat_threat(obj):
-    DroneApp.boat_threat = obj.get()
-    print('boat threat click ************************: ', DroneApp.boat_threat)
+    DroneApp.boat_th = obj.get()
+    print('boat threat click ************************: ', DroneApp.boat_th)
 
 #def apply_threat():
 #        plane_threat.config(text = combo_box.get())
@@ -168,11 +168,11 @@ class menu_bar:
     truck_sel=1
     plane_sel=1
     boat_sel=1
-    people_threat=0
-    car_threat=0
-    truck_threat=0
-    plane_threat=0
-    boat_threat=0
+    person_th=0
+    car_th=0
+    truck_th=0
+    plane_th=0
+    boat_th=0
     
     
     def __init__(self, master):
@@ -219,13 +219,16 @@ class DroneApp(menu_bar):
         self.canvas.grid(column=1, row=0)
         self.od = tr.tracker(DroneApp.person_sel, DroneApp.car_sel, 
                              DroneApp.truck_sel, DroneApp.plane_sel,
-                             DroneApp.boat_sel)
+                             DroneApp.boat_sel, DroneApp.person_th, DroneApp.car_th,
+                             DroneApp.truck_th, DroneApp.plane_th, DroneApp.boat_th)
         self.update_frame()
         
     def update_frame(self):
         self.frame = self.od.track_objects(DroneApp.person_sel, DroneApp.car_sel, 
                                            DroneApp.truck_sel, DroneApp.plane_sel,
-                                           DroneApp.boat_sel)
+                                           DroneApp.boat_sel, DroneApp.person_th, 
+                                           DroneApp.car_th, DroneApp.truck_th, 
+                                           DroneApp.plane_th, DroneApp.boat_th)
         self.current_image = Image.fromarray(cv2.cvtColor(self.frame, 
                                                           cv2.COLOR_BGR2RGB))
         self.photo = ImageTk.PhotoImage(image=self.current_image)
