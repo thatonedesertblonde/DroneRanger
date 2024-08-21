@@ -14,7 +14,7 @@ class tracker:
         # load yolov8m model
         self.model = YOLO('/app/OD/dnn_model/yolov8x.pt')
         # load video
-        self.cap = cv2.VideoCapture('/app/droneranger/videos/AirPortVideo1.mp4') #AirPortVideo1
+        self.cap = cv2.VideoCapture('/app/droneranger/videos/Cafe.mp4') #AirPortVideo1
         # get incoming frame width
         frame_width = int(self.cap.get(3))
         frame_height = int(self.cap.get(4))
@@ -40,6 +40,7 @@ class tracker:
         self.cnt_planes = 0
         self.cnt_boats = 0
         self.cnt_th_planes = 10
+        self.cnt_th_people = 10
         self.color=self.red
         
     def tracker_save(self):
@@ -125,7 +126,6 @@ class tracker:
             tracking_objects_copy = self.tracking_objects.copy()
             center_points_curr_frame_copy = center_points_curr_frame.copy()
 
-
             for object_id, pt2 in tracking_objects_copy.items():
                 object_exists = False
                 for pt in center_points_curr_frame_copy:
@@ -152,6 +152,8 @@ class tracker:
                     case 0.0: 
                         if th_person == 1:
                             self.cnt_people += 1
+                            if self.cnt_peopl > self.cnt_th_people:
+                                self.print_message(frame, 'People Threshold Reached!!!!')
                     case 2.0: 
                         if th_car == 1:
                             self.cnt_cars += 1
