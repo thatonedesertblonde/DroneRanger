@@ -6,6 +6,89 @@ import os
 import obj_detection.tracker_func as tr
 import threading
 
+def pilot_setup():
+    # init python variables
+    fName = ''
+    lName = ''
+    email = ''
+    dob = 0
+    aircraft= ''
+    other = ''
+
+    def submit():
+        # tkinter var to python
+        fName=fName_tk.get()
+        lName=lName_tk.get()
+        email=email_tk.get()
+        dob=dob_tk.get()
+        aircraft=aircraft_tk.get()
+        other=other_tk.get()
+        print('************')
+        print('First', fName, 'last', lName, 'email', email, 'dob', dob, aircraft, other)
+            
+    window = tk.Toplevel()
+    window.title("Pilot's Lounge")
+
+    frame = tk.Frame(window)
+    frame.pack()
+
+    # tkinter variables
+    fName_tk = tk.StringVar()
+    lName_tk = tk.StringVar()
+    email_tk = tk.StringVar()
+    dob_tk = tk.IntVar()
+    aircraft_tk = tk.StringVar()
+    other_tk = tk.StringVar()
+
+    # function to get text box info
+    # Enter button clicked
+    # Send tk variables to python variables
+    # firestName python version
+
+    pilot_info_frame = tk.LabelFrame(frame, text = "User Info")
+    pilot_info_frame.grid(row = 0, column = 0, padx = 20, pady = 20)
+
+    # Entry's
+    first_name_entry = tk.Entry(pilot_info_frame, textvariable=fName_tk)
+    first_name_entry.grid(row = 1, column = 0)
+    last_name_entry = tk.Entry(pilot_info_frame, textvariable=lName_tk)
+    last_name_entry.grid(row = 1, column = 1)
+    email_entry = tk.Entry(pilot_info_frame, textvariable= email_tk)
+    email_entry.grid(row = 1, column = 2)
+    dob_entry = tk.Entry(pilot_info_frame, textvariable= dob_tk)
+    dob_entry.grid(row =1, column = 3)
+    other_entry = tk.Entry(pilot_info_frame, textvariable=other_tk)
+    other_entry.grid(row = 3, column = 2)
+
+    first_name = tk.Label(pilot_info_frame, text = "First Name: ")
+    first_name.grid(row = 0, column = 0)
+    last_name = tk.Label(pilot_info_frame, text = "Last Name: ")
+    last_name.grid(row = 0, column = 1)
+
+
+    email = tk.Label(pilot_info_frame, text = " Email: ")
+    email.grid(row = 0, column = 2 )
+
+
+    dob = tk.Label(pilot_info_frame, text = " DOB: ")
+    dob.grid(row = 0, column = 3)
+    #dob_entry = tk.Entry(pilot_info_frame)
+    #dob_entry.grid(row = 3, column = 0)
+
+    # pull down different drone types
+    aircraft = tk.Label(pilot_info_frame, text = "Aircraft: ")
+    aircraft.grid(row = 2, column = 1)
+    aircraft_combobox = ttk.Combobox(pilot_info_frame, textvariable=aircraft_tk, 
+                                    values = ["MQ-9 Reaper", "Bayraktar TB2", "Global Hawk", "Wing Loong II", "Elbert Hermes 900", "CH-5 Rainbow", "MQ-4C Triton" ])
+    aircraft_combobox.grid(row = 3, column = 1)
+    aircraft_combobox.set(" Select your Aircraft ")
+
+    other = tk.Label(pilot_info_frame, text="Other: ")
+    other.grid(row =2, column = 2)
+
+    sub_btn=tk.Button(pilot_info_frame, text = 'Submit', command = submit)
+    sub_btn.grid(row=3, column=3)
+
                 
 def mode():
     #mode window
@@ -203,6 +286,7 @@ class menu_bar:
         #pilots lounge
         pl_tab = tk.Menu(menubar, tearoff = False)
         menubar.add_cascade(menu = pl_tab, label = "Pilot's Lounge")
+        pl_tab.add_command(label='Setup', command=pilot_setup)
 
 
 class DroneApp(menu_bar):
