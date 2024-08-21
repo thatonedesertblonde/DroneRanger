@@ -152,7 +152,7 @@ class tracker:
                     case 0.0: 
                         if th_person == 1:
                             self.cnt_people += 1
-                            if self.cnt_peopl > self.cnt_th_people:
+                            if self.cnt_people > self.cnt_th_people:
                                 self.print_message(frame, 'People Threshold Reached!!!!')
                     case 2.0: 
                         if th_car == 1:
