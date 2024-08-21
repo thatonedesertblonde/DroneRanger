@@ -88,7 +88,7 @@ def od():
                                                         pady=10, sticky='W')
 
     cars_tk = tk.IntVar(value=1)
-    threat_car = tk.IntVar()
+    threat_car = tk.IntVar(value=0)
     count_cars = tk.StringVar()
     tk.Checkbutton(class_frame, text='Cars', variable=cars_tk, 
                 onvalue=1, offvalue=0, 
@@ -105,7 +105,7 @@ def od():
                                                         pady=10, sticky='W') 
     
     trucks_tk = tk.IntVar(value=1)
-    threat_trucks = tk.IntVar()
+    threat_trucks = tk.IntVar(value=0)
     count_trucks = tk.StringVar()
     tk.Checkbutton(class_frame, text='Trucks', variable = trucks_tk,  
                 onvalue=1, offvalue=0, relief='groove',
@@ -122,10 +122,8 @@ def od():
                                                         pady=10, sticky='W')    
     
     planes_tk = tk.IntVar(value=1)
-    threat_plane = tk.IntVar()
+    threat_plane = tk.IntVar(value=1)
     count_plane = tk.StringVar()
-    
-    
     tk.Checkbutton(class_frame, text='Planes', variable = planes_tk, 
                 onvalue=1, offvalue=0, 
                 command= lambda: planeChange(planes_tk)).grid(row = 4, column=0, 
@@ -146,7 +144,7 @@ def od():
     #                                       pady=10, sticky='W')
 
     boats_tk = tk.IntVar(value=1)
-    threat_boats = tk.IntVar()
+    threat_boats = tk.IntVar(value=0)
     count_boats = tk.StringVar()
     tk.Checkbutton(class_frame, text='Boats', variable = boats_tk, 
                 onvalue=1, offvalue=0, 
