@@ -9,7 +9,9 @@ class tracker:
     green = (25, 255, 25)
     
     def __init__(self, person, car, truck, plane, boat,
-                 th_person, th_car, th_truck, th_plane, th_boat):
+                 th_person, th_car, th_truck, th_plane, th_boat,
+                 cnt_th_people, cnt_th_car, cnt_th_truck, 
+                 cnt_th_plane, cnt_th_boat):
 
         # load yolov8m model
         self.model = YOLO('/app/OD/dnn_model/yolov8x.pt')
@@ -39,8 +41,11 @@ class tracker:
         self.cnt_trucks = 0
         self.cnt_planes = 0
         self.cnt_boats = 0
-        self.cnt_th_planes = 10
-        self.cnt_th_people = 10
+        self.cnt_th_people = cnt_th_people
+        self.cnt_th_car = cnt_th_car
+        self.cnt_th_planes = cnt_th_plane
+        self.cnt_th_truck = cnt_th_truck
+        self.cnt_th_boat = cnt_th_boat
         self.color=self.red
         
     def tracker_save(self):
@@ -58,7 +63,8 @@ class tracker:
                     cv2.FONT_HERSHEY_SIMPLEX, 1.5, self.color, 6)
     
     def track_objects(self, person, car, truck, plane, boat,
-                      th_person, th_car, th_truck, th_plane, th_boat):
+                      th_person, th_car, th_truck, th_plane, th_boat, 
+                      cnt_th_people, cnt_th_car, cnt_th_truck, cnt_th_plane, cnt_th_boat):
         model = self.model
         ret, frame = self.cap.read()
         self.count += 1
@@ -152,31 +158,31 @@ class tracker:
                     case 0.0: 
                         if th_person == 1:
                             self.cnt_people += 1
-                            if self.cnt_people > self.cnt_th_people:
+                            if self.cnt_people > cnt_th_people:
                                 self.print_message(frame, 'People Threshold Reached!!!!')
                     case 2.0: 
                         if th_car == 1:
                             self.cnt_cars += 1
+                            if self.cnt_cars > cnt_th_car:
+                                self.print_message(frame, 'Car Threshold Reached!!!!')
                     case 4.0: 
                         if th_plane == 1:
                             self.cnt_planes += 1
-                            if self.cnt_planes > self.cnt_th_planes:
+                            if self.cnt_planes > cnt_th_plane:
                                 self.print_message(frame, 'Plane Threshold Reached!!!!')
                     case 7.0: 
                         if th_truck == 1:
                             self.cnt_trucks += 1
+                            if self.cnt_trucks > cnt_th_truck:
+                                self.print_message(frame, 'Truck Threshold Reached!!!!')
                     case 8.0: 
                         if th_boat == 1:
                             self.cnt_boats += 1
+                            if self.cnt_boats > self.cnt_th_boat:
+                                self.print_message(frame, 'Boat Threshold Reached!!!!')
                     case _:
                         print('Issue with case statement tracker.')
-        
-        
-                print('people count: ', self.cnt_people)
-                print('car count: ', self.cnt_cars)
-                print('truck count: ', self.cnt_trucks)
-                print('plane count: ', self.cnt_planes)
-
+                
                 self.track_id += 1
 
         # label boxes with ids

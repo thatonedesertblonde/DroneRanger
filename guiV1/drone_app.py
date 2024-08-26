@@ -23,8 +23,13 @@ def pilot_setup():
         dob=dob_tk.get()
         aircraft=aircraft_tk.get()
         other=other_tk.get()
-        print('************')
-        print('First', fName, 'last', lName, 'email', email, 'dob', dob, aircraft, other)
+        logList = [lName, fName, email, 
+                   dob, aircraft, other]
+        logListStr = str(logList)
+        
+        with open('/app/droneranger/log_data.txt', 'a') as f:
+            f.write(logListStr)
+            f.write('\n')
             
     window = tk.Toplevel()
     window.title("Pilot's Lounge")
@@ -142,20 +147,22 @@ def boat_threat(obj):
     DroneApp.boat_th = obj.get()
     print('boat threat click ************************: ', DroneApp.boat_th)
 
-#def apply_threat():
-#        plane_threat.config(text = combo_box.get())
+def submit(c_people, c_cars, c_trucks, c_planes, c_boats):
+    DroneApp.people_th_cnt=c_people.get()
+    DroneApp.car_th_cnt=c_cars.get()
+    DroneApp.truck_th_cnt=c_trucks.get()
+    DroneApp.plane_th_cnt=c_planes.get()
+    DroneApp.boat_th_cnt=c_boats.get()
 
 def od():    
     #OD window
     class_frame = tk.Toplevel() #.grid(anchor = 'w')
     class_frame.title("Required Object Detections:")
-    class_frame.geometry('550x220+1924+110')
-    #od_window = tk.Label(master = class_frame, text = "Required Object Detections: ")
-
+    class_frame.geometry('550x260+1924+110')
     #classes
     people_tk = tk.IntVar(value=1)
     threat_people = tk.IntVar()
-    count_people = tk.StringVar()
+    count_people = tk.IntVar()
     tk.Checkbutton(class_frame, text='People', variable=people_tk,
                 onvalue=1, offvalue=0, 
                 command=lambda:personChange(people_tk)).grid(row = 1, column=0, 
@@ -169,10 +176,9 @@ def od():
                                                     padx=10, pady=10)
     tk.Entry(class_frame, textvariable=count_people).grid(row=1, column=3, 
                                                         pady=10, sticky='W')
-
     cars_tk = tk.IntVar(value=1)
     threat_car = tk.IntVar(value=0)
-    count_cars = tk.StringVar()
+    count_cars = tk.IntVar()
     tk.Checkbutton(class_frame, text='Cars', variable=cars_tk, 
                 onvalue=1, offvalue=0, 
                 command=lambda:carChange(cars_tk)).grid(row = 2, column=0, 
@@ -186,10 +192,9 @@ def od():
                                                     padx=10, pady=10)
     tk.Entry(class_frame, textvariable=count_cars).grid(row=2, column=3, 
                                                         pady=10, sticky='W') 
-    
     trucks_tk = tk.IntVar(value=1)
     threat_trucks = tk.IntVar(value=0)
-    count_trucks = tk.StringVar()
+    count_trucks = tk.IntVar()
     tk.Checkbutton(class_frame, text='Trucks', variable = trucks_tk,  
                 onvalue=1, offvalue=0, relief='groove',
                 command= lambda: truckChange(trucks_tk)).grid(row = 3, column=0, 
@@ -203,10 +208,9 @@ def od():
                                                     padx=10, pady=10)
     tk.Entry(class_frame, textvariable=count_trucks).grid(row=3, column=3, 
                                                         pady=10, sticky='W')    
-    
     planes_tk = tk.IntVar(value=1)
     threat_plane = tk.IntVar(value=1)
-    count_plane = tk.StringVar()
+    count_plane = tk.IntVar()
     tk.Checkbutton(class_frame, text='Planes', variable = planes_tk, 
                 onvalue=1, offvalue=0, 
                 command= lambda: planeChange(planes_tk)).grid(row = 4, column=0, 
@@ -221,14 +225,9 @@ def od():
                                                     padx=10, pady=10)
     plane_entry = tk.Entry(class_frame, textvariable=count_plane).grid(row=4, column=3, 
                                                         pady=10, sticky='W')
-    #submit button
-    #tk.Button(class_frame, text = 'Apply', 
-    #          command = apply_threat).grid(row=4, column=4, 
-    #                                       pady=10, sticky='W')
-
     boats_tk = tk.IntVar(value=1)
     threat_boats = tk.IntVar(value=0)
-    count_boats = tk.StringVar()
+    count_boats = tk.IntVar()
     tk.Checkbutton(class_frame, text='Boats', variable = boats_tk, 
                 onvalue=1, offvalue=0, 
                 command= lambda: boatChange(boats_tk)).grid(row = 5, column=0, 
@@ -242,6 +241,12 @@ def od():
                                                     padx=10, pady=10)
     tk.Entry(class_frame, textvariable=count_boats).grid(row=5, column=3, 
                                                         pady=10, sticky='W')
+    #submit button
+    tk.Button(class_frame, text = 'Apply', 
+              command = lambda: submit(count_people, count_cars, count_trucks, 
+                                       count_plane, count_boats)).grid(row=6, column=2, 
+                                           pady=10, sticky='W')
+
 
 class menu_bar:
     person_sel=1
@@ -254,16 +259,18 @@ class menu_bar:
     truck_th=0
     plane_th=0
     boat_th=0
-    
+    people_th_cnt=10
+    car_th_cnt=10
+    truck_th_cnt=10
+    plane_th_cnt=10
+    boat_th_cnt=10
     
     def __init__(self, master):
         self.master = master          
         menubar = tk.Menu(master)
         master.config(menu=menubar)
-        
         od_tab = tk.Menu(menubar, tearoff = False) #button
         menubar.add_cascade(menu = od_tab, label = "Object Detection")
-        
         od_tab.add_command(label = "Objects",
                 accelerator = 'crtl+O',
                 command = od)
@@ -271,7 +278,7 @@ class menu_bar:
         # mission profile
         mp_tab = tk.Menu(menubar,tearoff = False)
         menubar.add_cascade(menu = mp_tab, label = "Mission Profile")
-        #---MODE   
+        # MODE   
         m = tk.Menu(mp_tab, tearoff = False)
         mp_tab.add_command(label = "Mode",
                         accelerator = 'crtl+M',
@@ -302,7 +309,10 @@ class DroneApp(menu_bar):
         self.od = tr.tracker(DroneApp.person_sel, DroneApp.car_sel, 
                              DroneApp.truck_sel, DroneApp.plane_sel,
                              DroneApp.boat_sel, DroneApp.person_th, DroneApp.car_th,
-                             DroneApp.truck_th, DroneApp.plane_th, DroneApp.boat_th)
+                             DroneApp.truck_th, DroneApp.plane_th, DroneApp.boat_th,
+                             DroneApp.people_th_cnt, DroneApp.car_th_cnt,
+                             DroneApp.truck_th_cnt, DroneApp.plane_th_cnt,
+                             DroneApp.boat_th_cnt)
         self.update_frame()
         
     def update_frame(self):
@@ -310,7 +320,10 @@ class DroneApp(menu_bar):
                                            DroneApp.truck_sel, DroneApp.plane_sel,
                                            DroneApp.boat_sel, DroneApp.person_th, 
                                            DroneApp.car_th, DroneApp.truck_th, 
-                                           DroneApp.plane_th, DroneApp.boat_th)
+                                           DroneApp.plane_th, DroneApp.boat_th,
+                                           DroneApp.people_th_cnt, DroneApp.car_th_cnt,
+                                           DroneApp.truck_th_cnt, DroneApp.plane_th_cnt,
+                                           DroneApp.boat_th_cnt)
         self.current_image = Image.fromarray(cv2.cvtColor(self.frame, 
                                                           cv2.COLOR_BGR2RGB))
         self.photo = ImageTk.PhotoImage(image=self.current_image)
