@@ -42,7 +42,7 @@ to fit this for a security program, we would have to take pictures of the author
 when they are registering their face and store them in the authorized_users directory
 under their name'''
 base_directory = '/app/droneranger/authorized_users/'
-authorized_users = ["Obama", "Trump", "Biden", "Will"]
+authorized_users = ["Obama", "Trump", "Biden", "Alexis"]
 
 # load sample pictures and get face encodings
 known_face_encodings = []
