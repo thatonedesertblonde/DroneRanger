@@ -26,7 +26,14 @@ def pilot_setup():
         logList = [lName, fName, email, 
                    dob, aircraft, other]
         logListStr = str(logList)
-        
+        pilot_lounge = '/app/droneranger/Pilotslounge/'
+        name= lName + '_' + fName + '.txt'
+        path_name = pilot_lounge + name
+
+        with open(path_name, 'w') as f:
+            f.write(logListStr)
+            f.write('\n')
+
         with open('/app/droneranger/log_data.txt', 'a') as f:
             f.write(logListStr)
             f.write('\n')
@@ -154,6 +161,27 @@ def submit(c_people, c_cars, c_trucks, c_planes, c_boats):
     DroneApp.plane_th_cnt=c_planes.get()
     DroneApp.boat_th_cnt=c_boats.get()
 
+def fcRecOnOff(obj):
+    # turn facial rec on of off
+    # pass variable from tk to python
+    DroneApp.person_sel = obj.get()
+    pass
+
+
+def fr_win():
+    #fr frame
+    class_frame = tk.Toplevel() #.grid(anchor = 'w')
+    class_frame.title("Facial Recognition:")
+    class_frame.geometry('160x100+1924+110')
+
+    fr_onoff_tk = tk.IntVar(value=0)
+    count_people = tk.IntVar()
+    tk.Checkbutton(class_frame, text='Face Recognition', variable=fr_onoff_tk,
+                onvalue=1, offvalue=0, 
+                command=lambda:fcRecOnOff(fr_onoff_tk)).grid(row = 1, column=0, 
+                                                                padx=10, pady=10, 
+                                                                sticky='W')
+
 def od():    
     #OD window
     class_frame = tk.Toplevel() #.grid(anchor = 'w')
@@ -264,6 +292,7 @@ class menu_bar:
     truck_th_cnt=10
     plane_th_cnt=10
     boat_th_cnt=10
+    fc_rec_onoff=0  
     
     def __init__(self, master):
         self.master = master          
@@ -275,9 +304,17 @@ class menu_bar:
                 accelerator = 'crtl+O',
                 command = od)
 
+        # face rec
+        #fr_tab = tk.Menu(menubar, tearoff = False) #button
+        #menubar.add_cascade(menu = od_tab, label = "Face Detection")
+        od_tab.add_command(label = "Face Rec",
+                accelerator = 'crtl+O',
+                command = fr_win)
+        
         # mission profile
         mp_tab = tk.Menu(menubar,tearoff = False)
         menubar.add_cascade(menu = mp_tab, label = "Mission Profile")
+        
         # MODE   
         m = tk.Menu(mp_tab, tearoff = False)
         mp_tab.add_command(label = "Mode",
