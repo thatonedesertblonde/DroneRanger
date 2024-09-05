@@ -76,8 +76,6 @@ def pilot_setup():
     first_name.grid(row = 0, column = 0)
     last_name = tk.Label(pilot_info_frame, text = "Last Name: ")
     last_name.grid(row = 0, column = 1)
-
-
     email = tk.Label(pilot_info_frame, text = " Email: ")
     email.grid(row = 0, column = 2 )
 
@@ -275,7 +273,33 @@ def od():
                                        count_plane, count_boats)).grid(row=6, column=2, 
                                            pady=10, sticky='W')
 
+def existing_member():
+   
 
+    em_window= tk.Toplevel() 
+    em_window.title("Welcome Back")
+    
+    em_frame = tk.Frame(em_window)
+    em_frame.pack()
+
+
+    #classes
+    email_tk  = tk.StringVar()
+    password_tk = tk.StringVar()
+
+    em_frame = tk.LabelFrame(em_frame, text = "Login")
+    em_frame.grid(row = 0, column = 0, padx = 20, pady = 20)
+
+    email_entry = tk.Entry(em_frame, textvariable= email_tk)
+    email_entry.grid(row = 0, column = 2)
+    password_entry = tk.Entry(em_frame, textvariable= email_tk)
+    password_entry.grid(row = 1, column = 2)
+
+    email_label = tk.Label(em_frame, text='Email: ')
+    email_label.grid(row = 0, column = 1)
+    pass_label = tk.Label(em_frame, text='Password: ')
+    pass_label.grid(row = 1, column = 1)
+    
 class menu_bar:
     person_sel=1
     car_sel=1
@@ -330,7 +354,8 @@ class menu_bar:
         #pilots lounge
         pl_tab = tk.Menu(menubar, tearoff = False)
         menubar.add_cascade(menu = pl_tab, label = "Pilot's Lounge")
-        pl_tab.add_command(label='Setup', command=pilot_setup)
+        pl_tab.add_command(label='New Member', command=pilot_setup)
+        pl_tab.add_command(label='Existing Member', command=existing_member)
 
 
 class DroneApp(menu_bar):
