@@ -7,6 +7,7 @@ import obj_detection.tracker_func as tr
 import threading
 from tkinter import Label
 from tkinter import filedialog
+import sqlite3
 
 def pilot_setup():
     # init python variables
@@ -18,33 +19,44 @@ def pilot_setup():
     other = ''
 
     def submit():
-    
         # tkinter var to python
         fName=fName_tk.get()
         lName=lName_tk.get()
-        iD =iD.tk.get()
+        iD =iD_tk.get()
         dob=dob_tk.get()
         aircraft=aircraft_tk.get()
         other=other_tk.get()
+        password=password_tk.get()
+        reenter=reenter_tk.get()
+
+        if password != renter:
+            #check_pass_tk="Password don't match"
+            check_password.config(text="Password don't match")
+            
+            return
+        else:
+            pass
         
+        print('passed')
+
+
         # Write to db
         # init db
-        #import sqlite3
-        #connection = sqlite3.connect("droneapp.db")
+        connection = sqlite3.connect("/app/droneranger/database/droneapp.db")
         
         # do once
         #cursor = connection.cursor()
-        #cursor.execute("CREATE TABLE pilots (email TEXT, fName TEXT, lName TEXT, dob TEXT, aicraft TEXT, other TEXT)")
+        #cursor.execute("CREATE TABLE pilots (iD TEXT, password TEXT, fName TEXT, lName TEXT, dob TEXT, aicraft TEXT, other TEXT)")
         
         # write new user values
-        #cursor = connection.cursor()
-        #cursor.execute("INSERT INTO pilots VALUES (email, fName, lName, ..)
+        cursor = connection.cursor()
+        cursor.execute("INSERT INTO pilots values(?, ?, ?, ?, ?, ?, ?)", (iD, password, fName, lName, dob, aircraft, other))
         
         # login page
         #rows = cursor.execute("SELECT email, fName, lName, dob, aircraft, other, password FROM fish WHERE email = email).fetchall()
         #print(rows)
         
-        logList = [lName, fName, email, 
+        logList = [lName, fName, iD, 
                    dob, aircraft, other]
         logListStr = str(logList)
         pilot_lounge = '/app/droneranger/Pilotslounge/'
@@ -80,7 +92,6 @@ def pilot_setup():
             except Exception as e:
                 tk.messagebox.showerror("Error", f"Failed to open image: {e}")
                 
-
             
     window = tk.Toplevel()
     window.title("Pilot's Lounge")
@@ -93,11 +104,13 @@ def pilot_setup():
     fName_tk = tk.StringVar()
     lName_tk = tk.StringVar()
     iD_tk = tk.StringVar()
-    dob_tk = tk.IntVar()
+    dob_tk = tk.StringVar()
     aircraft_tk = tk.StringVar()
     other_tk = tk.StringVar()
     password_tk = tk.StringVar()
     reenter_tk = tk.StringVar()
+    check_pass_tk = tk.StringVar(value='')
+    
     # function to get text box info
     # Enter button clicked
     # Send tk variables to python variables
@@ -149,6 +162,8 @@ def pilot_setup():
     reenter = tk.Label(pilot_info_frame, text = "Re-enter Password: ")
     reenter.grid(row = 3, column= 3, pady = 10)
     
+    check_password=tk.Label(pilot_info_frame, text='', fg='red')
+    check_password.grid(row=6, column=1, pady=10)
     #img_btn = tk.Button(pilot_info_frame, text = "Upload Your Profile Image", command = imageUploader)
     #img_btn.grid(row = 3, column = 3, padx = 10)
     sub_btn=tk.Button(pilot_info_frame, text = 'Submit', command = submit)
@@ -327,9 +342,11 @@ def od():
                                        count_plane, count_boats)).grid(row=6, column=2, 
                                            pady=10, sticky='W')
 
-def existing_member():
-   
 
+def submit_em():
+    print('Submit new user')
+
+def existing_member():
     em_window= tk.Toplevel() 
     em_window.title("Welcome Back")
     
@@ -349,10 +366,12 @@ def existing_member():
     password_entry = tk.Entry(em_frame, textvariable= password_tk)
     password_entry.grid(row = 1, column = 2)
 
-    email_label = tk.Label(em_frame, text='ID: ')
-    email_label.grid(row = 0, column = 1)
+    id_label = tk.Label(em_frame, text='ID: ')
+    id_label.grid(row = 0, column = 1)
     pass_label = tk.Label(em_frame, text='Password: ')
     pass_label.grid(row = 1, column = 1)
+    sub_btn=tk.Button(em_frame, text = 'Submit', command = submit_em)
+    sub_btn.grid(row=3, column=2, padx = 10, pady = 20)
 
 class menu_bar:
     person_sel=1
