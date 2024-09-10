@@ -26,6 +26,24 @@ def pilot_setup():
         dob=dob_tk.get()
         aircraft=aircraft_tk.get()
         other=other_tk.get()
+        
+        # Write to db
+        # init db
+        #import sqlite3
+        #connection = sqlite3.connect("droneapp.db")
+        
+        # do once
+        #cursor = connection.cursor()
+        #cursor.execute("CREATE TABLE pilots (email TEXT, fName TEXT, lName TEXT, dob TEXT, aicraft TEXT, other TEXT)")
+        
+        # write new user values
+        #cursor = connection.cursor()
+        #cursor.execute("INSERT INTO pilots VALUES (email, fName, lName, ..)
+        
+        # login page
+        #rows = cursor.execute("SELECT email, fName, lName, dob, aircraft, other, password FROM fish WHERE email = email).fetchall()
+        #print(rows)
+        
         logList = [lName, fName, email, 
                    dob, aircraft, other]
         logListStr = str(logList)
@@ -199,9 +217,8 @@ def submit(c_people, c_cars, c_trucks, c_planes, c_boats):
 def fcRecOnOff(obj):
     # turn facial rec on of off
     # pass variable from tk to python
-    DroneApp.person_sel = obj.get()
-    pass
-
+    DroneApp.face_rec = obj.get()
+    print('Face rec click ************************: ', DroneApp.face_rec)
 
 def fr_win():
     #fr frame
@@ -353,7 +370,7 @@ class menu_bar:
     truck_th_cnt=10
     plane_th_cnt=10
     boat_th_cnt=10
-    fc_rec_onoff=0  
+    face_rec=0  
     
     def __init__(self, master):
         self.master = master          
@@ -398,6 +415,7 @@ class menu_bar:
 class DroneApp(menu_bar):
     def __init__(self, master, videoWindow):
         self.master = master
+        #self.face_rec = 1
         self.videoWindow = videoWindow
         self.menu_bar = menu_bar(master)
         self.current_image = None
@@ -415,20 +433,28 @@ class DroneApp(menu_bar):
         self.update_frame()
         
     def update_frame(self):
-        self.frame = self.od.track_objects(DroneApp.person_sel, DroneApp.car_sel, 
-                                           DroneApp.truck_sel, DroneApp.plane_sel,
-                                           DroneApp.boat_sel, DroneApp.person_th, 
-                                           DroneApp.car_th, DroneApp.truck_th, 
-                                           DroneApp.plane_th, DroneApp.boat_th,
-                                           DroneApp.people_th_cnt, DroneApp.car_th_cnt,
-                                           DroneApp.truck_th_cnt, DroneApp.plane_th_cnt,
-                                           DroneApp.boat_th_cnt)
-        self.current_image = Image.fromarray(cv2.cvtColor(self.frame, 
-                                                          cv2.COLOR_BGR2RGB))
-        self.photo = ImageTk.PhotoImage(image=self.current_image)
-        self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
-        self.videoWindow.after(1, self.update_frame)
-    
+        if self.face_rec == 0:
+            self.frame = self.od.track_objects(DroneApp.person_sel, DroneApp.car_sel, 
+                                            DroneApp.truck_sel, DroneApp.plane_sel,
+                                            DroneApp.boat_sel, DroneApp.person_th, 
+                                            DroneApp.car_th, DroneApp.truck_th, 
+                                            DroneApp.plane_th, DroneApp.boat_th,
+                                            DroneApp.people_th_cnt, DroneApp.car_th_cnt,
+                                            DroneApp.truck_th_cnt, DroneApp.plane_th_cnt,
+                                            DroneApp.boat_th_cnt)
+            self.current_image = Image.fromarray(cv2.cvtColor(self.frame, 
+                                                            cv2.COLOR_BGR2RGB))
+            self.photo = ImageTk.PhotoImage(image=self.current_image)
+            self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
+            self.videoWindow.after(1, self.update_frame)
+        else:
+            self.frame = self.od.face_recognition()
+            self.current_image = Image.fromarray(cv2.cvtColor(self.frame, 
+                                                            cv2.COLOR_BGR2RGB))
+            self.photo = ImageTk.PhotoImage(image=self.current_image)
+            self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
+            self.videoWindow.after(1, self.update_frame)
+
     # download        
     def download_image(self):
         if self.current_image is not None:

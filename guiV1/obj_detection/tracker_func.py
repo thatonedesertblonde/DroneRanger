@@ -1,9 +1,34 @@
 from ultralytics import YOLO
+import face_recognition as fr
 import numpy as np
 import math
 import cv2
+import os
 
 
+class stream:
+    def __init__(self):
+        #self.cap = cv2.VideoCapture('/app/droneranger/videos/Cafe.mp4') #AirPortVideo1
+        self.cap = cv2.VideoCapture('/app/droneranger/videos/will.mp4') #AirPortVideo1
+        # get incoming frame width
+        frame_width = int(self.cap.get(3))
+        frame_height = int(self.cap.get(4))
+        # set size of frame
+        self.size = (frame_width, frame_height)
+        
+    def next_frame(self):
+        ret, frame = self.cap.read()
+        frame = cv2.resize(frame, (1920, 1080))
+        return ret, frame
+
+    def frame_size(self):
+        frame_width = int(self.cap.get(3))
+        frame_height = int(self.cap.get(4))
+        return frame_width, frame_height
+
+    def frame_release(self):
+        self.cap.release()
+        
 class tracker:
     red = (0, 0, 255)
     green = (25, 255, 25)
@@ -15,11 +40,23 @@ class tracker:
 
         # load yolov8m model
         self.model = YOLO('/app/OD/dnn_model/yolov8x.pt')
+        # load the pre-trained model and weights
+        self.net = cv2.dnn.readNetFromCaffe('/app/droneranger/face_recg_models/deploy.prototxt', '/app/droneranger/face_recg_models/res10_300x300_ssd_iter_140000_fp16.caffemodel')
+        self.base_directory = '/app/droneranger/authorized_users/'
+        self.authorized_users = ["Obama", "Trump", "Biden", "Alexis"]
+        known_face_names, known_face_encodings = self.face_encodings()
+        self.known_face_names = known_face_names
+        self.known_face_encodings = known_face_encodings
+
         # load video
-        self.cap = cv2.VideoCapture('/app/droneranger/videos/Cafe.mp4') #AirPortVideo1
+        self.stream = stream()
+        #self.cap = cv2.VideoCapture('/app/droneranger/videos/Cafe.mp4') #AirPortVideo1
         # get incoming frame width
-        frame_width = int(self.cap.get(3))
-        frame_height = int(self.cap.get(4))
+        #frame_width = int(self.cap.get(3))
+        #frame_height = int(self.cap.get(4))
+        frame_width, frame_height = self.stream.frame_size()
+        self.frame_width = frame_width
+        self.frame_height = frame_height
         # set size of frame
         self.size = (frame_width, frame_height)
         self.person = person
@@ -62,17 +99,132 @@ class tracker:
         cv2.putText(frame, input, (1400, 100),
                     cv2.FONT_HERSHEY_SIMPLEX, 1.5, self.color, 6)
     
+    def preprocess_image(self, image_path):
+        # load image using face_recognition
+        image = fr.load_image_file(image_path)
+
+        # detect faces
+        face_locations = fr.face_locations(image)
+
+        if len(face_locations) == 1:
+            top, right, bottom, left = face_locations[0]
+            face_image = image[top:bottom, left:right]
+
+            # convert to RGB if greyscale
+            face_image = cv2.cvtColor(face_image, cv2.COLOR_BGR2RGB)
+
+            return face_image
+        else:
+            return None  # or handle multiple/no faces found
+
+    def face_encodings(self):
+        # load sample pictures and get face encodings
+        known_face_encodings = []
+        known_face_names = []
+
+
+        for person_name in self.authorized_users:
+            folder_path = os.path.join(self.base_directory, person_name.lower().replace(" ", "_"))
+
+            # load and encode faces from the images using preprocessing
+            for image_file in os.listdir(folder_path):
+                image_path = os.path.join(folder_path, image_file)
+
+                # preprocess the image
+                if os.path.isfile(image_path):
+                    processed_image = self.preprocess_image(image_path)
+
+                    # if face was detected, add encoding to the list
+                    if processed_image is not None:
+                        person_face_encoding = fr.face_encodings(processed_image)
+                        if person_face_encoding:  # Check if face was detected
+                            known_face_encodings.append(person_face_encoding[0])
+                            known_face_names.append(person_name)
+        return known_face_names, known_face_encodings
+
+    def face_recognition(self):
+        ret, frame = self.stream.next_frame()
+        # get the frame dimensions
+        (h, w) = frame.shape[:2]
+        blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)), 1.0, (300, 300), (104.0, 177.0, 123.0))
+        self.net.setInput(blob)
+        detections = self.net.forward()
+
+        face_names = []
+
+        for i in range(0, detections.shape[2]):
+            confidence = detections[0, 0, i, 2]
+            if confidence > 0.5:  # confidence threshold to hit before drawing the rectangle
+                box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+                (startX, startY, endX, endY) = box.astype("int")
+
+                # draw the rectangle around the face
+                face = frame[startY:endY, startX:endX]
+                face_rgb = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
+                face_encodings = fr.face_encodings(face_rgb)
+
+                # if face was detected, compare it with known faces 
+                name = "Unknown" # default name
+                if face_encodings:
+                    matches = fr.compare_faces(self.known_face_encodings, face_encodings[0]) # compare the face with known faces
+                    face_distances = fr.face_distance(self.known_face_encodings, face_encodings[0]) # get the distance between the face and known faces
+                    if face_distances.size > 0: # if there are known faces
+                        best_match_index = np.argmin(face_distances)
+                        if matches[best_match_index]:
+                            name = self.known_face_names[best_match_index] # get the name of the best match
+
+                face_names.append(name) 
+
+                '''put green if authorized, red if unauthorized/unknown
+                this can be expanded to include access to files or whatever based off the name
+                for now, we will just print the name and whether they are authorized or not'''
+                color = (0,0,0)
+                if name in self.authorized_users: 
+                    color = (0, 255, 0) 
+                else:
+                    color = (0, 0, 255)
+
+                # determin the authorization status
+                authorization_status ="Unauthorized"
+                if name in self.authorized_users:
+                    authorization_status = "Authorized"
+                else:
+                    authorization_status = "Unauthorized"
+                
+                # put the confidence level and authorization status on top of the rectangle
+                confidence_text = f"{confidence*100:.2f}% {authorization_status}"
+
+                # draw the rectangle around the face
+                cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
+                
+                # put the confidence level and authorization status on top of the rectangle
+                label_size, _ = cv2.getTextSize(confidence_text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+                label_top = max(startY, label_size[1] + 10)
+                cv2.rectangle(frame, (startX, label_top - label_size[1] - 10), (startX + label_size[0], label_top), color, cv2.FILLED)
+                cv2.putText(frame, confidence_text, (startX, label_top - 6), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+                
+                # put the name of the person on the rectangle
+                cv2.rectangle(frame, (startX, endY - 35), (endX, endY), color, cv2.FILLED)
+                cv2.putText(frame, name, (startX + 6, endY - 6), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+        return frame    
+    
     def track_objects(self, person, car, truck, plane, boat,
                       th_person, th_car, th_truck, th_plane, th_boat, 
                       cnt_th_people, cnt_th_car, cnt_th_truck, cnt_th_plane, cnt_th_boat):
         model = self.model
-        ret, frame = self.cap.read()
+        #ret, frame = self.cap.read()
+        ret, frame = self.stream.next_frame()
         self.count += 1
         # destroy windows if end of mp4
         if not ret:
-            self.cap.release()
+            #self.cap.release()
+            self.stream.frame_release()
             cv2.destroyAllWindows() # always do this
-
+        
+        # resize frame to match DroneApp frame size
+        #frame = cv2.resize(frame, (1920, 1080))
+        
+        # init center points
         center_points_curr_frame = []
 
         # detect boxes w/ yolov8m
@@ -192,7 +344,7 @@ class tracker:
             cv2.putText(frame, str(object_id), (pt[0], pt[1] - 7), 0, 1, (0, 0, 255), 2) 
 
         # resize frame
-        frame = cv2.resize(frame, (1920, 1080))
+        #frame = cv2.resize(frame, (1920, 1080))
         
         # copy curr to prev
         # for first two frames 
