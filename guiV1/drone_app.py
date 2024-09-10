@@ -5,21 +5,24 @@ from PIL import Image, ImageTk
 import os
 import obj_detection.tracker_func as tr
 import threading
+from tkinter import Label
+from tkinter import filedialog
 
 def pilot_setup():
     # init python variables
     fName = ''
     lName = ''
-    email = ''
+    iD = ''
     dob = 0
     aircraft= ''
     other = ''
 
     def submit():
+    
         # tkinter var to python
         fName=fName_tk.get()
         lName=lName_tk.get()
-        email=email_tk.get()
+        iD =iD.tk.get()
         dob=dob_tk.get()
         aircraft=aircraft_tk.get()
         other=other_tk.get()
@@ -30,6 +33,12 @@ def pilot_setup():
         name= lName + '_' + fName + '.txt'
         path_name = pilot_lounge + name
 
+        #img = label.image
+        #img_pil = ImageTk.getimage(img)
+        #name_img = lName + '_' + fName + 'jpeg'
+        #img_path_name = pilot_lounge + name_img
+        #img_pil.save(img_path_name)
+
         with open(path_name, 'w') as f:
             f.write(logListStr)
             f.write('\n')
@@ -37,21 +46,40 @@ def pilot_setup():
         with open('/app/droneranger/log_data.txt', 'a') as f:
             f.write(logListStr)
             f.write('\n')
+
+    def imageUploader():
+        fileTypes = [("Upload Your Profile Picture")]
+        path = tk.filedialog.askopenfilename()
+        if path:
+            try:  
+                img = Image.open(path)
+                img.show()
+                img = img.resize((200, 200))
+
+                img=ImageTk.PhotoImage(img)
+                label.config(image=img)
+                label.image=img
+            except Exception as e:
+                tk.messagebox.showerror("Error", f"Failed to open image: {e}")
+                
+
             
     window = tk.Toplevel()
     window.title("Pilot's Lounge")
-
+    label = tk.Label(window)
+    label.pack()
     frame = tk.Frame(window)
     frame.pack()
 
     # tkinter variables
     fName_tk = tk.StringVar()
     lName_tk = tk.StringVar()
-    email_tk = tk.StringVar()
+    iD_tk = tk.StringVar()
     dob_tk = tk.IntVar()
     aircraft_tk = tk.StringVar()
     other_tk = tk.StringVar()
-
+    password_tk = tk.StringVar()
+    reenter_tk = tk.StringVar()
     # function to get text box info
     # Enter button clicked
     # Send tk variables to python variables
@@ -62,24 +90,26 @@ def pilot_setup():
 
     # Entry's
     first_name_entry = tk.Entry(pilot_info_frame, textvariable=fName_tk)
-    first_name_entry.grid(row = 1, column = 0)
+    first_name_entry.grid(row = 1, column = 0, padx = 10, pady = 10)
     last_name_entry = tk.Entry(pilot_info_frame, textvariable=lName_tk)
-    last_name_entry.grid(row = 1, column = 1)
-    email_entry = tk.Entry(pilot_info_frame, textvariable= email_tk)
-    email_entry.grid(row = 1, column = 2)
+    last_name_entry.grid(row = 1, column = 1, padx = 10, pady = 10)
+    iD_entry = tk.Entry(pilot_info_frame, textvariable= iD_tk)
+    iD_entry.grid(row = 1, column = 2,padx = 10, pady = 10)
     dob_entry = tk.Entry(pilot_info_frame, textvariable= dob_tk)
-    dob_entry.grid(row =1, column = 3)
+    dob_entry.grid(row =1, column = 3, padx = 10, pady = 10)
     other_entry = tk.Entry(pilot_info_frame, textvariable=other_tk)
-    other_entry.grid(row = 3, column = 2)
+    other_entry.grid(row = 4, column = 1, padx = 10, pady = 10)
+    password_entry = tk.Entry(pilot_info_frame, textvariable=password_tk)
+    password_entry.grid(row = 4,column = 2, pady = 10)
+    reenter_entry = tk.Entry(pilot_info_frame, textvariable=reenter_tk)
+    reenter_entry.grid(row = 4,column = 3, pady = 10)
 
     first_name = tk.Label(pilot_info_frame, text = "First Name: ")
     first_name.grid(row = 0, column = 0)
     last_name = tk.Label(pilot_info_frame, text = "Last Name: ")
     last_name.grid(row = 0, column = 1)
-    email = tk.Label(pilot_info_frame, text = " Email: ")
-    email.grid(row = 0, column = 2 )
-
-
+    iD = tk.Label(pilot_info_frame, text = " Identification Number: ")
+    iD.grid(row = 0, column = 2 )
     dob = tk.Label(pilot_info_frame, text = " DOB: ")
     dob.grid(row = 0, column = 3)
     #dob_entry = tk.Entry(pilot_info_frame)
@@ -87,17 +117,24 @@ def pilot_setup():
 
     # pull down different drone types
     aircraft = tk.Label(pilot_info_frame, text = "Aircraft: ")
-    aircraft.grid(row = 2, column = 1)
+    aircraft.grid(row = 3, column = 0)
     aircraft_combobox = ttk.Combobox(pilot_info_frame, textvariable=aircraft_tk, 
                                     values = ["MQ-9 Reaper", "Bayraktar TB2", "Global Hawk", "Wing Loong II", "Elbert Hermes 900", "CH-5 Rainbow", "MQ-4C Triton" ])
-    aircraft_combobox.grid(row = 3, column = 1)
+    aircraft_combobox.grid(row = 4, column = 0)
     aircraft_combobox.set(" Select your Aircraft ")
 
     other = tk.Label(pilot_info_frame, text="Other: ")
-    other.grid(row =2, column = 2)
-
+    other.grid(row =3, column = 1)
+    
+    password = tk.Label(pilot_info_frame, text = "Password: ")
+    password.grid(row = 3, column= 2, pady= 10)
+    reenter = tk.Label(pilot_info_frame, text = "Re-enter Password: ")
+    reenter.grid(row = 3, column= 3, pady = 10)
+    
+    #img_btn = tk.Button(pilot_info_frame, text = "Upload Your Profile Image", command = imageUploader)
+    #img_btn.grid(row = 3, column = 3, padx = 10)
     sub_btn=tk.Button(pilot_info_frame, text = 'Submit', command = submit)
-    sub_btn.grid(row=3, column=3)
+    sub_btn.grid(row=5, column=3, padx = 10, pady = 20)
 
                 
 def mode():
@@ -284,22 +321,22 @@ def existing_member():
 
 
     #classes
-    email_tk  = tk.StringVar()
+    id_tk  = tk.StringVar()
     password_tk = tk.StringVar()
 
     em_frame = tk.LabelFrame(em_frame, text = "Login")
     em_frame.grid(row = 0, column = 0, padx = 20, pady = 20)
 
-    email_entry = tk.Entry(em_frame, textvariable= email_tk)
-    email_entry.grid(row = 0, column = 2)
-    password_entry = tk.Entry(em_frame, textvariable= email_tk)
+    id_entry = tk.Entry(em_frame, textvariable= id_tk)
+    id_entry.grid(row = 0, column = 2)
+    password_entry = tk.Entry(em_frame, textvariable= password_tk)
     password_entry.grid(row = 1, column = 2)
 
-    email_label = tk.Label(em_frame, text='Email: ')
+    email_label = tk.Label(em_frame, text='ID: ')
     email_label.grid(row = 0, column = 1)
     pass_label = tk.Label(em_frame, text='Password: ')
     pass_label.grid(row = 1, column = 1)
-    
+
 class menu_bar:
     person_sel=1
     car_sel=1
