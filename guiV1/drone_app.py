@@ -181,8 +181,7 @@ def fcRecOnOff(obj):
     # turn facial rec on of off
     # pass variable from tk to python
     DroneApp.face_rec = obj.get()
-    pass
-
+    print('Face rec click ************************: ', DroneApp.face_rec)
 
 def fr_win():
     #fr frame
@@ -334,7 +333,7 @@ class menu_bar:
     truck_th_cnt=10
     plane_th_cnt=10
     boat_th_cnt=10
-    fc_rec_onoff=0  
+    face_rec=0  
     
     def __init__(self, master):
         self.master = master          
@@ -379,7 +378,7 @@ class menu_bar:
 class DroneApp(menu_bar):
     def __init__(self, master, videoWindow):
         self.master = master
-        self.face_rec = 1
+        #self.face_rec = 1
         self.videoWindow = videoWindow
         self.menu_bar = menu_bar(master)
         self.current_image = None
