@@ -9,7 +9,7 @@ import os
 class stream:
     def __init__(self):
         #self.cap = cv2.VideoCapture('/app/droneranger/videos/Cafe.mp4') #AirPortVideo1
-        self.cap = cv2.VideoCapture('/app/droneranger/videos/Cafe.mp4') #AirPortVideo1
+        self.cap = cv2.VideoCapture('/app/droneranger/videos/face_test_2.mp4') #AirPortVideo1
         # get incoming frame width
         frame_width = int(self.cap.get(3))
         frame_height = int(self.cap.get(4))

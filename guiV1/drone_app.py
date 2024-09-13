@@ -9,7 +9,7 @@ from tkinter import Label
 from tkinter import filedialog
 import sqlite3
 
-def pilot_setup():
+def pilot_setup(connection):
     # init python variables
     fName = ''
     lName = ''
@@ -18,7 +18,7 @@ def pilot_setup():
     aircraft= ''
     other = ''
 
-    def submit():
+    def submit(connection):
         # tkinter var to python
         fName=fName_tk.get()
         lName=lName_tk.get()
@@ -29,7 +29,7 @@ def pilot_setup():
         password=password_tk.get()
         reenter=reenter_tk.get()
 
-        if password != renter:
+        if password != reenter:
             #check_pass_tk="Password don't match"
             check_password.config(text="Password don't match")
             
@@ -42,7 +42,7 @@ def pilot_setup():
 
         # Write to db
         # init db
-        connection = sqlite3.connect("/app/droneranger/database/droneapp.db")
+        #connection = sqlite3.connect("/app/droneranger/database/droneapp.db")
         
         # do once
         #cursor = connection.cursor()
@@ -166,7 +166,7 @@ def pilot_setup():
     check_password.grid(row=6, column=1, pady=10)
     #img_btn = tk.Button(pilot_info_frame, text = "Upload Your Profile Image", command = imageUploader)
     #img_btn.grid(row = 3, column = 3, padx = 10)
-    sub_btn=tk.Button(pilot_info_frame, text = 'Submit', command = submit)
+    sub_btn=tk.Button(pilot_info_frame, text = 'Submit', command = lambda: submit(connection))
     sub_btn.grid(row=5, column=3, padx = 10, pady = 20)
 
                 
@@ -394,6 +394,7 @@ class menu_bar:
     def __init__(self, master):
         self.master = master          
         menubar = tk.Menu(master)
+        self.connection = sqlite3.connect("/app/droneranger/database/droneapp.db")
         master.config(menu=menubar)
         od_tab = tk.Menu(menubar, tearoff = False) #button
         menubar.add_cascade(menu = od_tab, label = "Object Detection")
@@ -427,7 +428,7 @@ class menu_bar:
         #pilots lounge
         pl_tab = tk.Menu(menubar, tearoff = False)
         menubar.add_cascade(menu = pl_tab, label = "Pilot's Lounge")
-        pl_tab.add_command(label='New Member', command=pilot_setup)
+        pl_tab.add_command(label='New Member', command=lambda: pilot_setup(self.connection))
         pl_tab.add_command(label='Existing Member', command=existing_member)
 
 
