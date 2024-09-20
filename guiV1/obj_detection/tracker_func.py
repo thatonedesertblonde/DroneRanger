@@ -8,8 +8,8 @@ import os
 
 class stream:
     def __init__(self):
-        #self.cap = cv2.VideoCapture('/app/droneranger/videos/Cafe.mp4') #AirPortVideo1
-        self.cap = cv2.VideoCapture('/app/droneranger/videos/face_test_2.mp4') #AirPortVideo1
+        self.cap = cv2.VideoCapture('/app/droneranger/videos/Cafe.mp4') #AirPortVideo1
+        #self.cap = cv2.VideoCapture('/app/droneranger/videos/face_test_2.mp4') #AirPortVideo1
         # get incoming frame width
         frame_width = int(self.cap.get(3))
         frame_height = int(self.cap.get(4))
@@ -50,15 +50,12 @@ class tracker:
 
         # load video
         self.stream = stream()
-        #self.cap = cv2.VideoCapture('/app/droneranger/videos/Cafe.mp4') #AirPortVideo1
-        # get incoming frame width
-        #frame_width = int(self.cap.get(3))
-        #frame_height = int(self.cap.get(4))
         frame_width, frame_height = self.stream.frame_size()
         self.frame_width = frame_width
         self.frame_height = frame_height
         # set size of frame
         self.size = (frame_width, frame_height)
+        # set variables pass from gui to model
         self.person = person
         self.car = car
         self.truck = truck
@@ -109,10 +106,8 @@ class tracker:
         if len(face_locations) == 1:
             top, right, bottom, left = face_locations[0]
             face_image = image[top:bottom, left:right]
-
             # convert to RGB if greyscale
             face_image = cv2.cvtColor(face_image, cv2.COLOR_BGR2RGB)
-
             return face_image
         else:
             return None  # or handle multiple/no faces found
@@ -122,18 +117,14 @@ class tracker:
         known_face_encodings = []
         known_face_names = []
 
-
         for person_name in self.authorized_users:
             folder_path = os.path.join(self.base_directory, person_name.lower().replace(" ", "_"))
-
             # load and encode faces from the images using preprocessing
             for image_file in os.listdir(folder_path):
                 image_path = os.path.join(folder_path, image_file)
-
                 # preprocess the image
                 if os.path.isfile(image_path):
                     processed_image = self.preprocess_image(image_path)
-
                     # if face was detected, add encoding to the list
                     if processed_image is not None:
                         person_face_encoding = fr.face_encodings(processed_image)
@@ -149,7 +140,7 @@ class tracker:
         blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)), 1.0, (300, 300), (104.0, 177.0, 123.0))
         self.net.setInput(blob)
         detections = self.net.forward()
-
+        # create empty list for face names
         face_names = []
 
         for i in range(0, detections.shape[2]):
@@ -157,12 +148,10 @@ class tracker:
             if confidence > 0.5:  # confidence threshold to hit before drawing the rectangle
                 box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
                 (startX, startY, endX, endY) = box.astype("int")
-
                 # draw the rectangle around the face
                 face = frame[startY:endY, startX:endX]
                 face_rgb = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
                 face_encodings = fr.face_encodings(face_rgb)
-
                 # if face was detected, compare it with known faces 
                 name = "Unknown" # default name
                 if face_encodings:
@@ -172,7 +161,7 @@ class tracker:
                         best_match_index = np.argmin(face_distances)
                         if matches[best_match_index]:
                             name = self.known_face_names[best_match_index] # get the name of the best match
-
+                # append face to list
                 face_names.append(name) 
 
                 '''put green if authorized, red if unauthorized/unknown
@@ -183,20 +172,16 @@ class tracker:
                     color = (0, 255, 0) 
                 else:
                     color = (0, 0, 255)
-
                 # determin the authorization status
                 authorization_status ="Unauthorized"
                 if name in self.authorized_users:
                     authorization_status = "Authorized"
                 else:
-                    authorization_status = "Unauthorized"
-                
+                    authorization_status = "Unauthorized"                
                 # put the confidence level and authorization status on top of the rectangle
                 confidence_text = f"{confidence*100:.2f}% {authorization_status}"
-
                 # draw the rectangle around the face
-                cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
-                
+                cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)                
                 # put the confidence level and authorization status on top of the rectangle
                 label_size, _ = cv2.getTextSize(confidence_text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
                 label_top = max(startY, label_size[1] + 10)
@@ -219,14 +204,9 @@ class tracker:
         if not ret:
             #self.cap.release()
             self.stream.frame_release()
-            cv2.destroyAllWindows() # always do this
-        
-        # resize frame to match DroneApp frame size
-        #frame = cv2.resize(frame, (1920, 1080))
-        
+            cv2.destroyAllWindows() # always do this       
         # init center points
         center_points_curr_frame = []
-
         # detect boxes w/ yolov8m
         detections = model(frame, classes=[0, 2, 4, 7, 8], verbose=False)[0]
         boxes_data = detections.boxes.data.tolist()
@@ -240,8 +220,7 @@ class tracker:
                 or (car == 1 and class_ids == 2.0) \
                 or (plane == 1 and class_ids == 4.0) \
                 or (truck  == 1 and class_ids == 7.0) \
-                or (boat == 1 and class_ids == 8.0):
-                
+                or (boat == 1 and class_ids == 8.0):                
                 # keep track of people detected: cnt_people
                 # people_cnt_th - The value in the tkinter box for people count 
                 # set color to green if threat is off.  Red for on.
@@ -267,8 +246,8 @@ class tracker:
                 cv2.rectangle(frame, (int(xmin), int(ymin)), (int(xmax), int(ymax)), color, 2)
                 class_info = self.model.names[class_ids]
                 # draws the name of the object and the confidence level next it
-                cv2.putText(frame, f"{class_info}: {confidence:.2f}", (int(xmin), int(ymin)),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.95, (250, 250, 0), 2) 
+                cv2.putText(frame, f"{class_info}: {confidence:.2f}", (int(xmin), int(ymin-4)),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.60, (250, 250, 0), 2) 
 
         # first two frames
         if self.count <= 2:
@@ -338,10 +317,10 @@ class tracker:
                 self.track_id += 1
 
         # label boxes with ids
-        for object_id, pt in self.tracking_objects.items():
-            cv2.circle(frame, pt[0:2], 5, (0, 0, 5),  -1)
-            # draw a circle in center, place frame #
-            cv2.putText(frame, str(object_id), (pt[0], pt[1] - 7), 0, 1, (0, 0, 255), 2) 
+        #for object_id, pt in self.tracking_objects.items():
+        #    cv2.circle(frame, pt[0:2], 5, (0, 0, 5),  -1)
+        #    # draw a circle in center, place frame #
+        #    cv2.putText(frame, str(object_id), (pt[0], pt[1] - 7), 0, 1, (0, 0, 255), 2) 
 
         # resize frame
         #frame = cv2.resize(frame, (1920, 1080))

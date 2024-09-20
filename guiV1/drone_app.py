@@ -63,12 +63,6 @@ def pilot_setup(connection):
         name= lName + '_' + fName + '.txt'
         path_name = pilot_lounge + name
 
-        #img = label.image
-        #img_pil = ImageTk.getimage(img)
-        #name_img = lName + '_' + fName + 'jpeg'
-        #img_path_name = pilot_lounge + name_img
-        #img_pil.save(img_path_name)
-
         with open(path_name, 'w') as f:
             f.write(logListStr)
             f.write('\n')
@@ -174,7 +168,7 @@ def mode():
     #mode window
     m_frame = tk.Toplevel()
     m_frame.title("MODE: ")
-    m_frame.geometry('200x50+1924+110')
+    m_frame.geometry('200x50+0+102')
     #dropbox
     combo_box = ttk.Combobox(m_frame, values=["MANUAL", "AUTOMATIC"])
     combo_box.pack(pady=5)
@@ -184,43 +178,33 @@ def mode():
 def personChange(obj):
     print(obj.get())
     DroneApp.person_sel = obj.get()
-    print('person button click ************************: ', DroneApp.person_sel)
 
 def carChange(obj):
     DroneApp.car_sel = obj.get()
-    print('car button click ************************: ', DroneApp.car_sel)
     
 def truckChange(obj):
     DroneApp.truck_sel = obj.get()
-    print('truck button click ************************: ', DroneApp.truck_sel)
 
 def planeChange(obj):
     DroneApp.plane_sel = obj.get()
-    print('plane button click ************************: ', DroneApp.plane_sel)   
 
 def boatChange(obj):
     DroneApp.boat_sel = obj.get()
-    print('boat button click ************************: ', DroneApp.boat_sel)
 
 def people_threat(obj):
     DroneApp.person_th = obj.get()
-    print('people threat click ************************: ', DroneApp.person_th)
     
 def car_threat(obj):
     DroneApp.car_th = obj.get()
-    print('car threat click ************************: ', DroneApp.car_th)
 
 def truck_threat(obj):
     DroneApp.truck_th = obj.get()
-    print('truck threat click ************************: ', DroneApp.truck_th)
 
 def plane_threat(obj):
     DroneApp.plane_th = obj.get()
-    print('plane threat click ************************: ', DroneApp.plane_th)
 
 def boat_threat(obj):
     DroneApp.boat_th = obj.get()
-    print('boat threat click ************************: ', DroneApp.boat_th)
 
 def submit(c_people, c_cars, c_trucks, c_planes, c_boats):
     DroneApp.people_th_cnt=c_people.get()
@@ -233,13 +217,12 @@ def fcRecOnOff(obj):
     # turn facial rec on of off
     # pass variable from tk to python
     DroneApp.face_rec = obj.get()
-    print('Face rec click ************************: ', DroneApp.face_rec)
 
 def fr_win():
     #fr frame
     class_frame = tk.Toplevel() #.grid(anchor = 'w')
     class_frame.title("Facial Recognition:")
-    class_frame.geometry('160x100+1924+110')
+    class_frame.geometry('160x100+0+102')
 
     fr_onoff_tk = tk.IntVar(value=0)
     count_people = tk.IntVar()
@@ -253,7 +236,7 @@ def od():
     #OD window
     class_frame = tk.Toplevel() #.grid(anchor = 'w')
     class_frame.title("Required Object Detections:")
-    class_frame.geometry('550x260+1924+110')
+    class_frame.geometry('550x260+0+102')
     #classes
     people_tk = tk.IntVar(value=1)
     threat_people = tk.IntVar()
@@ -346,32 +329,32 @@ def od():
 def submit_em():
     print('Submit new user')
 
-def existing_member():
+def existing_member(root):
     em_window= tk.Toplevel() 
     em_window.title("Welcome Back")
-    
     em_frame = tk.Frame(em_window)
     em_frame.pack()
 
-
-    #classes
+    # convert id and password to python
     id_tk  = tk.StringVar()
     password_tk = tk.StringVar()
-
+    # create frame
     em_frame = tk.LabelFrame(em_frame, text = "Login")
     em_frame.grid(row = 0, column = 0, padx = 20, pady = 20)
-
+    # create entry's 
     id_entry = tk.Entry(em_frame, textvariable= id_tk)
     id_entry.grid(row = 0, column = 2)
     password_entry = tk.Entry(em_frame, textvariable= password_tk)
     password_entry.grid(row = 1, column = 2)
-
+    # create labels
     id_label = tk.Label(em_frame, text='ID: ')
     id_label.grid(row = 0, column = 1)
     pass_label = tk.Label(em_frame, text='Password: ')
     pass_label.grid(row = 1, column = 1)
     sub_btn=tk.Button(em_frame, text = 'Submit', command = submit_em)
     sub_btn.grid(row=3, column=2, padx = 10, pady = 20)
+    root.wait_window(em_window)
+    
 
 class menu_bar:
     person_sel=1
@@ -484,6 +467,15 @@ class DroneApp(menu_bar):
         else:
             print('image is none') 
 
+class DialogWindow(tk.Toplevel):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.title("Dialog")
+
+        tk.Label(self, text="This is a dialog window").pack()
+        tk.Button(self, text="Close", command=self.destroy).pack()
+
+
 def main():    
     root = tk.Tk()
     root.title('DroneRanger')
@@ -492,6 +484,15 @@ def main():
     panedwindow.pack(fill='both', expand=True)
     video_frame = ttk.Frame(root, width=1920, height=1080, relief='sunken')
     panedwindow.add(video_frame)
+    root.withdraw()
+    # Add a Text widget in a toplevel window
+    #top= tk.Toplevel(root)
+    #top.geometry("450x150")
+    #Label(top,text="This is a TopLevel Window", font= ('Aerial 17')).pack(pady=50)
+    existing_member(root)
+    # Wait for the toplevel window to be closed
+    print("Top Level Window has been Closed!")
+    root.deiconify()
     app = DroneApp(root, video_frame)
     root.mainloop()
 
