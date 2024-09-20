@@ -8,6 +8,7 @@ import threading
 from tkinter import Label
 from tkinter import filedialog
 import sqlite3
+from contextlib import closing
 
 def pilot_setup(connection):
     # init python variables
@@ -28,6 +29,7 @@ def pilot_setup(connection):
         other=other_tk.get()
         password=password_tk.get()
         reenter=reenter_tk.get()
+        print('aircraft ', aircraft)
 
         if password != reenter:
             #check_pass_tk="Password don't match"
@@ -50,8 +52,13 @@ def pilot_setup(connection):
         
         # write new user values
         cursor = connection.cursor()
+        rows=cursor.execute("SELECT iD, password FROM pilots").fetchall()
+        print(rows)
         cursor.execute("INSERT INTO pilots values(?, ?, ?, ?, ?, ?, ?)", (iD, password, fName, lName, dob, aircraft, other))
-        
+        cursor.close
+        cursor = connection.cursor()
+        rows=cursor.execute("SELECT iD, password FROM pilots").fetchall()
+        print(rows)
         # login page
         #rows = cursor.execute("SELECT email, fName, lName, dob, aircraft, other, password FROM fish WHERE email = email).fetchall()
         #print(rows)
@@ -326,8 +333,21 @@ def od():
                                            pady=10, sticky='W')
 
 
-def submit_em():
-    print('Submit new user')
+def submit_em(iD):
+    # login page
+    target_id=iD.get()
+    connection = sqlite3.connect("/app/droneranger/database/droneapp.db")
+    cursor = connection.cursor()
+    rows=cursor.execute("SELECT iD, password FROM pilots").fetchall()       
+    print('Read ')
+    print(rows) 
+    #cursor = connection.cursor()
+    #rows = cursor.execute("SELECT email, fName, lName, dob, aircraft, other, password FROM pilots WHERE id = iD.fetchall()
+        #print(rows)
+
+    #rows = cursor.execute("SELECT name, species, tank_number FROM pilots WHERE name = ?",(target_id,),).fetchall()
+    #print('Submit new user')
+    #print(rows)
 
 def existing_member(root):
     em_window= tk.Toplevel() 
@@ -351,8 +371,9 @@ def existing_member(root):
     id_label.grid(row = 0, column = 1)
     pass_label = tk.Label(em_frame, text='Password: ')
     pass_label.grid(row = 1, column = 1)
-    sub_btn=tk.Button(em_frame, text = 'Submit', command = submit_em)
+    sub_btn=tk.Button(em_frame, text = 'Submit', command = lambda: submit_em(id_tk))
     sub_btn.grid(row=3, column=2, padx = 10, pady = 20)
+    
     root.wait_window(em_window)
     
 
