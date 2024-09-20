@@ -55,6 +55,7 @@ def pilot_setup(connection):
         rows=cursor.execute("SELECT iD, password FROM pilots").fetchall()
         print(rows)
         cursor.execute("INSERT INTO pilots values(?, ?, ?, ?, ?, ?, ?)", (iD, password, fName, lName, dob, aircraft, other))
+        connection.commit()
         cursor.close
         cursor = connection.cursor()
         rows=cursor.execute("SELECT iD, password FROM pilots").fetchall()
@@ -246,8 +247,8 @@ def od():
     class_frame.geometry('550x260+0+102')
     #classes
     people_tk = tk.IntVar(value=1)
-    threat_people = tk.IntVar()
-    count_people = tk.IntVar()
+    threat_people = tk.IntVar(value=0)
+    count_people = tk.IntVar(value=100000000)
     tk.Checkbutton(class_frame, text='People', variable=people_tk,
                 onvalue=1, offvalue=0, 
                 command=lambda:personChange(people_tk)).grid(row = 1, column=0, 
@@ -263,7 +264,7 @@ def od():
                                                         pady=10, sticky='W')
     cars_tk = tk.IntVar(value=1)
     threat_car = tk.IntVar(value=0)
-    count_cars = tk.IntVar()
+    count_cars = tk.IntVar(value=100000000)
     tk.Checkbutton(class_frame, text='Cars', variable=cars_tk, 
                 onvalue=1, offvalue=0, 
                 command=lambda:carChange(cars_tk)).grid(row = 2, column=0, 
@@ -279,7 +280,7 @@ def od():
                                                         pady=10, sticky='W') 
     trucks_tk = tk.IntVar(value=1)
     threat_trucks = tk.IntVar(value=0)
-    count_trucks = tk.IntVar()
+    count_trucks = tk.IntVar(value=100000000)
     tk.Checkbutton(class_frame, text='Trucks', variable = trucks_tk,  
                 onvalue=1, offvalue=0, relief='groove',
                 command= lambda: truckChange(trucks_tk)).grid(row = 3, column=0, 
@@ -294,8 +295,8 @@ def od():
     tk.Entry(class_frame, textvariable=count_trucks).grid(row=3, column=3, 
                                                         pady=10, sticky='W')    
     planes_tk = tk.IntVar(value=1)
-    threat_plane = tk.IntVar(value=1)
-    count_plane = tk.IntVar()
+    threat_plane = tk.IntVar(value=0)
+    count_plane = tk.IntVar(value=100000000)
     tk.Checkbutton(class_frame, text='Planes', variable = planes_tk, 
                 onvalue=1, offvalue=0, 
                 command= lambda: planeChange(planes_tk)).grid(row = 4, column=0, 
@@ -312,7 +313,7 @@ def od():
                                                         pady=10, sticky='W')
     boats_tk = tk.IntVar(value=1)
     threat_boats = tk.IntVar(value=0)
-    count_boats = tk.IntVar()
+    count_boats = tk.IntVar(value=100000000)
     tk.Checkbutton(class_frame, text='Boats', variable = boats_tk, 
                 onvalue=1, offvalue=0, 
                 command= lambda: boatChange(boats_tk)).grid(row = 5, column=0, 
@@ -333,31 +334,32 @@ def od():
                                            pady=10, sticky='W')
 
 
-def submit_em(iD):
+def submit_em(root, em_window, iD, password):
     # login page
     target_id=iD.get()
+    target_password=password.get()
     connection = sqlite3.connect("/app/droneranger/database/droneapp.db")
     cursor = connection.cursor()
-    rows=cursor.execute("SELECT iD, password FROM pilots").fetchall()       
-    print('Read ')
-    print(rows) 
-    #cursor = connection.cursor()
-    #rows = cursor.execute("SELECT email, fName, lName, dob, aircraft, other, password FROM pilots WHERE id = iD.fetchall()
-        #print(rows)
-
-    #rows = cursor.execute("SELECT name, species, tank_number FROM pilots WHERE name = ?",(target_id,),).fetchall()
-    #print('Submit new user')
-    #print(rows)
-
+    rows=cursor.execute("SELECT password FROM pilots WHERE iD = ?", (target_id,),).fetchall()
+    print(rows)
+    if rows == []:
+        print("don't match")
+    elif rows[0][0] == target_password:
+        print('passswords match')
+        em_window.destroy()  
+    else:
+        print("somethins iwrong in login screen")
+ 
 def existing_member(root):
     em_window= tk.Toplevel() 
+    em_window.geometry('1920x1080')
     em_window.title("Welcome Back")
     em_frame = tk.Frame(em_window)
     em_frame.pack()
 
     # convert id and password to python
-    id_tk  = tk.StringVar()
-    password_tk = tk.StringVar()
+    id_tk  = tk.StringVar(value="")
+    password_tk = tk.StringVar(value="")
     # create frame
     em_frame = tk.LabelFrame(em_frame, text = "Login")
     em_frame.grid(row = 0, column = 0, padx = 20, pady = 20)
@@ -371,7 +373,8 @@ def existing_member(root):
     id_label.grid(row = 0, column = 1)
     pass_label = tk.Label(em_frame, text='Password: ')
     pass_label.grid(row = 1, column = 1)
-    sub_btn=tk.Button(em_frame, text = 'Submit', command = lambda: submit_em(id_tk))
+    sub_btn=tk.Button(em_frame, text = 'Submit', 
+                      command = lambda: submit_em(root, em_window, id_tk, password_tk))
     sub_btn.grid(row=3, column=2, padx = 10, pady = 20)
     
     root.wait_window(em_window)
@@ -433,7 +436,6 @@ class menu_bar:
         pl_tab = tk.Menu(menubar, tearoff = False)
         menubar.add_cascade(menu = pl_tab, label = "Pilot's Lounge")
         pl_tab.add_command(label='New Member', command=lambda: pilot_setup(self.connection))
-        pl_tab.add_command(label='Existing Member', command=existing_member)
 
 
 class DroneApp(menu_bar):
@@ -506,10 +508,6 @@ def main():
     video_frame = ttk.Frame(root, width=1920, height=1080, relief='sunken')
     panedwindow.add(video_frame)
     root.withdraw()
-    # Add a Text widget in a toplevel window
-    #top= tk.Toplevel(root)
-    #top.geometry("450x150")
-    #Label(top,text="This is a TopLevel Window", font= ('Aerial 17')).pack(pady=50)
     existing_member(root)
     # Wait for the toplevel window to be closed
     print("Top Level Window has been Closed!")
