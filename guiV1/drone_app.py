@@ -183,6 +183,20 @@ def mode():
     combo_box.set("MANUAL")
     combo_box.bind("<<ComboboxSelected>>", mode)
 
+def unauthorized():
+    window = tk.Tk()
+    window.title("WARNING")
+    u_frame = tk.Frame()
+    u_frame.pack()
+
+    unauthorized_frame = tk.LabelFrame(u_frame, text = "Access Denied")
+    unauthorized_frame.grid(row = 0, column = 1, padx = 10, pady = 10)
+    
+    u_label = tk.Label("WARNING: Restricted Area")
+    u_label.grid(row= 1, column=1, padx = 10, pady = 10)
+    #u_label.grid(row=0, column= 0)
+
+
 def personChange(obj):
     print(obj.get())
     DroneApp.person_sel = obj.get()
@@ -424,14 +438,15 @@ class menu_bar:
         m = tk.Menu(mp_tab, tearoff = False)
         mp_tab.add_command(label = "Mode",
                         accelerator = 'crtl+M',
-                        command = mode)
+                        command = unauthorized)
 
         #---SET WAY POINTS
         mp_tab.add_separator()
         wp = tk.Menu(mp_tab,tearoff = False)    
         mp_tab.add_command(label = 'Set Way Points',
-                        accelerator = 'crtl+W')
-                        #command = setways)
+                        accelerator = 'crtl+W',
+                        command = unauthorized)
+        
         #pilots lounge
         pl_tab = tk.Menu(menubar, tearoff = False)
         menubar.add_cascade(menu = pl_tab, label = "Pilot's Lounge")
