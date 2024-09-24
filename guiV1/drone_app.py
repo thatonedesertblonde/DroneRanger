@@ -9,6 +9,7 @@ from tkinter import Label
 from tkinter import filedialog
 import sqlite3
 from contextlib import closing
+import shutil
 
 def pilot_setup(connection):
     # init python variables
@@ -78,22 +79,6 @@ def pilot_setup(connection):
         with open('/app/droneranger/log_data.txt', 'a') as f:
             f.write(logListStr)
             f.write('\n')
-
-    def imageUploader():
-        fileTypes = [("Upload Your Profile Picture")]
-        path = tk.filedialog.askopenfilename()
-        if path:
-            try:  
-                img = Image.open(path)
-                img.show()
-                img = img.resize((200, 200))
-
-                img=ImageTk.PhotoImage(img)
-                label.config(image=img)
-                label.image=img
-            except Exception as e:
-                tk.messagebox.showerror("Error", f"Failed to open image: {e}")
-                
             
     window = tk.Toplevel()
     window.title("Pilot's Lounge")
@@ -184,15 +169,16 @@ def mode():
     combo_box.bind("<<ComboboxSelected>>", mode)
 
 def unauthorized():
-    window = tk.Tk()
+    window = tk.Toplevel()
     window.title("WARNING")
-    u_frame = tk.Frame()
+    window.geometry('500x150+0+102')
+    u_frame = tk.Frame(window)
     u_frame.pack()
 
     unauthorized_frame = tk.LabelFrame(u_frame, text = "Access Denied")
     unauthorized_frame.grid(row = 0, column = 1, padx = 10, pady = 10)
     
-    u_label = tk.Label("WARNING: Restricted Area")
+    u_label = tk.Label(unauthorized_frame, text = "WARNING: Restricted Area")
     u_label.grid(row= 1, column=1, padx = 10, pady = 10)
     #u_label.grid(row=0, column= 0)
 
@@ -240,19 +226,45 @@ def fcRecOnOff(obj):
     # pass variable from tk to python
     DroneApp.face_rec = obj.get()
 
+def imageUploader(nametk):
+    fileTypes = [("Upload Your Profile Picture")]
+    path = tk.filedialog.askopenfilenames()
+    name=nametk.get()
+    print('Name:', name, 'Path: ', path)
+    auth_path = os.path.join("/app/droneranger/authorized_users/", name)
+    print(auth_path)
+    os.mkdir(auth_path)
+    for file_path in path:
+        if os.path.isfile(file_path):
+            shutil.copy(file_path, auth_path)
+        else:
+            print(f"File not found: {file_path}")
+
+
 def fr_win():
     #fr frame
     class_frame = tk.Toplevel() #.grid(anchor = 'w')
     class_frame.title("Facial Recognition:")
-    class_frame.geometry('160x100+0+102')
+    class_frame.geometry('360x140+0+102')
 
     fr_onoff_tk = tk.IntVar(value=0)
+    name_tk = tk.StringVar(value="")
+    
     count_people = tk.IntVar()
     tk.Checkbutton(class_frame, text='Face Recognition', variable=fr_onoff_tk,
                 onvalue=1, offvalue=0, 
                 command=lambda:fcRecOnOff(fr_onoff_tk)).grid(row = 1, column=0, 
                                                                 padx=10, pady=10, 
                                                                 sticky='W')
+    tk.Label(class_frame, text='Name: ').grid(row=2, column = 0, 
+                                                    padx=10, pady=10)
+    tk.Entry(class_frame, textvariable=name_tk).grid(row=2, column=1, 
+                                                        pady=10, sticky='W')
+    
+    #name=name_tk.get() 
+    tk.Button(class_frame, text='Add Face Rec. Pics', 
+              command=lambda: imageUploader(name_tk)).grid(row=3, column=0, 
+                                                    pady=10, sticky='W')
 
 def od():    
     #OD window

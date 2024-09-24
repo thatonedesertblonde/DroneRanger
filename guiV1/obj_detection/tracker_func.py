@@ -93,8 +93,8 @@ class tracker:
             self.color=self.green
         else:
             self.color=self.red 
-        cv2.putText(frame, input, (1400, 100),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1.5, self.color, 6)
+        cv2.putText(frame, input, (1000, 100),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1.5, self.color, 4)
     
     def preprocess_image(self, image_path):
         # load image using face_recognition
