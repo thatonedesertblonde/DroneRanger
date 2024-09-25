@@ -36,7 +36,7 @@ class tracker:
     def __init__(self, person, car, truck, plane, boat,
                  th_person, th_car, th_truck, th_plane, th_boat,
                  cnt_th_people, cnt_th_car, cnt_th_truck, 
-                 cnt_th_plane, cnt_th_boat):
+                 cnt_th_plane, cnt_th_boat, reset_count):
 
         # load yolov8m model
         self.model = YOLO('/app/OD/dnn_model/yolov8x.pt')
@@ -75,6 +75,7 @@ class tracker:
         self.cnt_trucks = 0
         self.cnt_planes = 0
         self.cnt_boats = 0
+        self.reset_count = reset_count
         self.cnt_th_people = cnt_th_people
         self.cnt_th_car = cnt_th_car
         self.cnt_th_planes = cnt_th_plane
@@ -195,9 +196,18 @@ class tracker:
     
     def track_objects(self, person, car, truck, plane, boat,
                       th_person, th_car, th_truck, th_plane, th_boat, 
-                      cnt_th_people, cnt_th_car, cnt_th_truck, cnt_th_plane, cnt_th_boat):
+                      cnt_th_people, cnt_th_car, cnt_th_truck, cnt_th_plane, cnt_th_boat, reset_count):
         model = self.model
-        #ret, frame = self.cap.read()
+        #reset count
+        if reset_count==1:
+            print('RESET count')
+            self.cnt_people=0
+            self.cnt_cars=0
+            self.cnt_trucks=0
+            self.cnt_planes=0
+            self.cnt_boats=0
+        
+
         ret, frame = self.stream.next_frame()
         self.count += 1
         # destroy windows if end of mp4
@@ -309,7 +319,7 @@ class tracker:
                     case 8.0: 
                         if th_boat == 1:
                             self.cnt_boats += 1
-                            if self.cnt_boats > self.cnt_th_boat:
+                            if self.cnt_boats > cnt_th_boat:
                                 self.print_message(frame, 'Boat Threshold Reached!!!!')
                     case _:
                         print('Issue with case statement tracker.')

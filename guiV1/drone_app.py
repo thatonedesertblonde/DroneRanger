@@ -30,7 +30,6 @@ def pilot_setup(connection):
         other=other_tk.get()
         password=password_tk.get()
         reenter=reenter_tk.get()
-        print('aircraft ', aircraft)
 
         if password != reenter:
             #check_pass_tk="Password don't match"
@@ -39,9 +38,6 @@ def pilot_setup(connection):
             return
         else:
             pass
-        
-        print('passed')
-
 
         # Write to db
         # init db
@@ -54,16 +50,11 @@ def pilot_setup(connection):
         # write new user values
         cursor = connection.cursor()
         rows=cursor.execute("SELECT iD, password FROM pilots").fetchall()
-        print(rows)
         cursor.execute("INSERT INTO pilots values(?, ?, ?, ?, ?, ?, ?)", (iD, password, fName, lName, dob, aircraft, other))
         connection.commit()
         cursor.close
         cursor = connection.cursor()
         rows=cursor.execute("SELECT iD, password FROM pilots").fetchall()
-        print(rows)
-        # login page
-        #rows = cursor.execute("SELECT email, fName, lName, dob, aircraft, other, password FROM fish WHERE email = email).fetchall()
-        #print(rows)
         
         logList = [lName, fName, iD, 
                    dob, aircraft, other]
@@ -214,6 +205,12 @@ def plane_threat(obj):
 def boat_threat(obj):
     DroneApp.boat_th = obj.get()
 
+def reset(obj):
+    if DroneApp.reset_count == 0:
+        DroneApp.reset_count = 1
+    else:
+        DroneApp.reset_count = 0 
+    
 def submit(c_people, c_cars, c_trucks, c_planes, c_boats):
     DroneApp.people_th_cnt=c_people.get()
     DroneApp.car_th_cnt=c_cars.get()
@@ -359,6 +356,11 @@ def od():
                                        count_plane, count_boats)).grid(row=6, column=2, 
                                            pady=10, sticky='W')
 
+    #reset counter button
+    reset_counter_tk=tk.IntVar()
+    tk.Button(class_frame, text = 'Reset', 
+              command = lambda: reset(reset_counter_tk)).grid(row=6, column=3, 
+                                           pady=10, sticky='W')
 
 def submit_em(root, em_window, iD, password):
     # login page
@@ -423,6 +425,7 @@ class menu_bar:
     plane_th_cnt=10
     boat_th_cnt=10
     face_rec=0  
+    reset_count=0
     
     def __init__(self, master):
         self.master = master          
@@ -482,7 +485,7 @@ class DroneApp(menu_bar):
                              DroneApp.truck_th, DroneApp.plane_th, DroneApp.boat_th,
                              DroneApp.people_th_cnt, DroneApp.car_th_cnt,
                              DroneApp.truck_th_cnt, DroneApp.plane_th_cnt,
-                             DroneApp.boat_th_cnt)
+                             DroneApp.boat_th_cnt, DroneApp.reset_count)
         self.update_frame()
         
     def update_frame(self):
@@ -494,7 +497,7 @@ class DroneApp(menu_bar):
                                             DroneApp.plane_th, DroneApp.boat_th,
                                             DroneApp.people_th_cnt, DroneApp.car_th_cnt,
                                             DroneApp.truck_th_cnt, DroneApp.plane_th_cnt,
-                                            DroneApp.boat_th_cnt)
+                                            DroneApp.boat_th_cnt, DroneApp.reset_count)
             self.current_image = Image.fromarray(cv2.cvtColor(self.frame, 
                                                             cv2.COLOR_BGR2RGB))
             self.photo = ImageTk.PhotoImage(image=self.current_image)
