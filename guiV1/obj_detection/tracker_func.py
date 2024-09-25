@@ -200,7 +200,6 @@ class tracker:
         model = self.model
         #reset count
         if reset_count==1:
-            print('RESET count')
             self.cnt_people=0
             self.cnt_cars=0
             self.cnt_trucks=0
