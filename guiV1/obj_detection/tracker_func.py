@@ -8,7 +8,7 @@ import os
 
 class stream:
     def __init__(self):
-        self.cap = cv2.VideoCapture('/app/droneranger/videos/Cafe.mp4') #AirPortVideo1
+        self.cap = cv2.VideoCapture('/app/droneranger/videos/First.mp4') #AirPortVideo1
         #self.cap = cv2.VideoCapture('/app/droneranger/videos/face_test_2.mp4') #AirPortVideo1
         # get incoming frame width
         frame_width = int(self.cap.get(3))
@@ -252,11 +252,11 @@ class tracker:
                 center_points_curr_frame.append([cx, cy, class_ids]) 
 
                 # draw boxes
-                cv2.rectangle(frame, (int(xmin), int(ymin)), (int(xmax), int(ymax)), color, 2)
+                cv2.rectangle(frame, (int(xmin), int(ymin)), (int(xmax), int(ymax)), color, 1)
                 class_info = self.model.names[class_ids]
                 # draws the name of the object and the confidence level next it
                 cv2.putText(frame, f"{class_info}: {confidence:.2f}", (int(xmin), int(ymin-4)),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.60, (250, 250, 0), 2) 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.50, (250, 250, 0), 2) 
 
         # first two frames
         if self.count <= 2:

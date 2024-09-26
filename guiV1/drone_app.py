@@ -121,9 +121,7 @@ def pilot_setup(connection):
     iD.grid(row = 0, column = 2 )
     dob = tk.Label(pilot_info_frame, text = " DOB: ")
     dob.grid(row = 0, column = 3)
-    #dob_entry = tk.Entry(pilot_info_frame)
-    #dob_entry.grid(row = 3, column = 0)
-
+ 
     # pull down different drone types
     aircraft = tk.Label(pilot_info_frame, text = "Aircraft: ")
     aircraft.grid(row = 3, column = 0)
@@ -137,13 +135,13 @@ def pilot_setup(connection):
     
     password = tk.Label(pilot_info_frame, text = "Password: ")
     password.grid(row = 3, column= 2, pady= 10)
+ 
     reenter = tk.Label(pilot_info_frame, text = "Re-enter Password: ")
     reenter.grid(row = 3, column= 3, pady = 10)
     
     check_password=tk.Label(pilot_info_frame, text='', fg='red')
     check_password.grid(row=6, column=1, pady=10)
-    #img_btn = tk.Button(pilot_info_frame, text = "Upload Your Profile Image", command = imageUploader)
-    #img_btn.grid(row = 3, column = 3, padx = 10)
+ 
     sub_btn=tk.Button(pilot_info_frame, text = 'Submit', command = lambda: submit(connection))
     sub_btn.grid(row=5, column=3, padx = 10, pady = 20)
 
@@ -165,14 +163,11 @@ def unauthorized():
     window.geometry('500x150+0+102')
     u_frame = tk.Frame(window)
     u_frame.pack()
-
     unauthorized_frame = tk.LabelFrame(u_frame, text = "Access Denied")
-    unauthorized_frame.grid(row = 0, column = 1, padx = 10, pady = 10)
-    
+    unauthorized_frame.grid(row = 0, column = 1, padx = 10, pady = 10)    
     u_label = tk.Label(unauthorized_frame, text = "WARNING: Restricted Area")
     u_label.grid(row= 1, column=1, padx = 10, pady = 10)
     #u_label.grid(row=0, column= 0)
-
 
 def personChange(obj):
     print(obj.get())
@@ -433,28 +428,23 @@ class menu_bar:
         self.connection = sqlite3.connect("/app/droneranger/database/droneapp.db")
         master.config(menu=menubar)
         od_tab = tk.Menu(menubar, tearoff = False) #button
+        # object detection
         menubar.add_cascade(menu = od_tab, label = "Object Detection")
         od_tab.add_command(label = "Objects",
                 accelerator = 'crtl+O',
                 command = od)
-
         # face rec
-        #fr_tab = tk.Menu(menubar, tearoff = False) #button
-        #menubar.add_cascade(menu = od_tab, label = "Face Detection")
         od_tab.add_command(label = "Face Rec",
                 accelerator = 'crtl+O',
-                command = fr_win)
-        
+                command = fr_win)        
         # mission profile
         mp_tab = tk.Menu(menubar,tearoff = False)
         menubar.add_cascade(menu = mp_tab, label = "Mission Profile")
-        
         # MODE   
         m = tk.Menu(mp_tab, tearoff = False)
         mp_tab.add_command(label = "Mode",
                         accelerator = 'crtl+M',
                         command = unauthorized)
-
         #---SET WAY POINTS
         mp_tab.add_separator()
         wp = tk.Menu(mp_tab,tearoff = False)    
@@ -471,12 +461,11 @@ class menu_bar:
 class DroneApp(menu_bar):
     def __init__(self, master, videoWindow):
         self.master = master
-        #self.face_rec = 1
         self.videoWindow = videoWindow
         self.menu_bar = menu_bar(master)
         self.current_image = None
         self.canvas = tk.Canvas(videoWindow, 
-                                width=1820, 
+                                width=1920, 
                                 height=1080)
         self.canvas.grid(column=1, row=0)
         self.od = tr.tracker(DroneApp.person_sel, DroneApp.car_sel, 
