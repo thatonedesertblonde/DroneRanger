@@ -73,6 +73,7 @@ def pilot_setup(connection):
             
     window = tk.Toplevel()
     window.title("Pilot's Lounge")
+    window.geometry('800x340+0+102')
     label = tk.Label(window)
     label.pack()
     frame = tk.Frame(window)
@@ -150,7 +151,7 @@ def mode():
     #mode window
     m_frame = tk.Toplevel()
     m_frame.title("MODE: ")
-    m_frame.geometry('200x50+0+70')
+    m_frame.geometry('200x50+0+102')
     #dropbox
     combo_box = ttk.Combobox(m_frame, values=["MANUAL", "AUTOMATIC"])
     combo_box.pack(pady=5)
@@ -160,7 +161,7 @@ def mode():
 def unauthorized():
     window = tk.Toplevel()
     window.title("WARNING")
-    window.geometry('500x150+0+70')
+    window.geometry('500x150+0+102')
     u_frame = tk.Frame(window)
     u_frame.pack()
     unauthorized_frame = tk.LabelFrame(u_frame, text = "Access Denied")
@@ -237,7 +238,7 @@ def fr_win():
     #fr frame
     class_frame = tk.Toplevel() #.grid(anchor = 'w')
     class_frame.title("Facial Recognition:")
-    class_frame.geometry('360x140+0+70')
+    class_frame.geometry('360x140+0+102')
 
     fr_onoff_tk = tk.IntVar(value=0)
     name_tk = tk.StringVar(value="")
@@ -262,7 +263,7 @@ def od():
     #OD window
     class_frame = tk.Toplevel() #.grid(anchor = 'w')
     class_frame.title("Required Object Detections:")
-    class_frame.geometry('550x260+0+70')
+    class_frame.geometry('550x260+0+102')
     #classes
     people_tk = tk.IntVar(value=1)
     threat_people = tk.IntVar(value=0)
